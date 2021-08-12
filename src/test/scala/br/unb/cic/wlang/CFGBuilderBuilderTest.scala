@@ -1,10 +1,6 @@
 package br.unb.cic.wlang
 
 import org.scalatest.funsuite.AnyFunSuite
-import scalax.collection.GraphEdge
-import scalax.collection.mutable.Graph
-import scalax.collection.GraphPredef.EdgeAssoc
-
 
 class CFGBuilderBuilderTest extends AnyFunSuite {
 
@@ -38,7 +34,6 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
          ,(Node(d3), Node(d4))
          ,(Node(d4), Node(w1))
          ,(Node(w1), Node(d5)))
-
 
     assert(expected == g)
   }
