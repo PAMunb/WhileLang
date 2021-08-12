@@ -36,7 +36,7 @@ case class GT(left: AExp, right: AExp) extends BExp
 /* Concrete implementations of Statements */
 
 case class Assignment(name: String, exp: AExp, label: Int) extends Stmt
-case class Sequence(s1: Stmt, s2: Stmt) extends Stmt
+case class Sequence(s1: Stmt, s2: Stmt) extends Stmt   // s1;s2
 case class IfThenElse(condition: BExp, thenStmt: Stmt, elseStmt: Stmt, label: Int) extends Stmt
 case class While(condition: BExp, stmt: Stmt, label: Int) extends Stmt
 case class Skip(label: Int) extends Stmt

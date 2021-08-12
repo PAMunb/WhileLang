@@ -1,8 +1,5 @@
 package br.unb.cic.wlang
 
-import scalax.collection.mutable.Graph
-import scalax.collection.GraphEdge
-import scalax.collection.GraphPredef.EdgeAssoc
 
 /**
  * The root of the hierarchy of the
@@ -10,30 +7,21 @@ import scalax.collection.GraphPredef.EdgeAssoc
  */
 abstract class GraphNode
 
-/**
- * Represents the start node of a control-flow
- * graph.
- */
-case object StartNode extends GraphNode
 
 /**
  * Represents a real node from the function or program statements
  *
  * @param stmt the statement of a program or function
  */
-case class SimpleNode(stmt: Stmt) extends GraphNode
+case class Node(stmt: Stmt) extends GraphNode
 
-/**
- * Represents an end node of a control-flow
- * graph.
- */
-case object EndNode extends GraphNode
 
 /**
  * An Scala object responsible for building control
  * flow graphs from a While program.
  */
 object CFGBuilder {
+  type CFG = Set[(GraphNode, GraphNode)]
   /**
    * Builds a control flow graph from a given While program.
    *
@@ -41,37 +29,22 @@ object CFGBuilder {
    *
    * @return The control-flow graph of the While program
    */
-  def build(program: WhileProgram): Graph[GraphNode, GraphEdge.DiEdge] = {
-    val g = Graph[GraphNode, GraphEdge.DiEdge]()
-    build(g, program.stmt, StartNode, EndNode)
-  }
+  def build(program: WhileProgram): CFG = flow(program.stmt)
 
   /*
    * The "core" of the algorithm for building
    * control-flow graphs. Here we use pattern
    * matching over the different statements.
+   *
+   * (for { from <- finalStmt(s1) } yield (from, initStatement(s2)))
    */
-  private def build(g:Graph[GraphNode, GraphEdge.DiEdge], stmt: Stmt, currentNode: GraphNode, targetNode: GraphNode): Graph[GraphNode, GraphEdge.DiEdge] = {
+  private def flow(stmt: Stmt): CFG = {
     stmt match {
-      case Assignment(_, _, _) =>
-        val newNode = SimpleNode(stmt)
-        g += currentNode ~> newNode
-        g += newNode ~> targetNode
-      case IfThenElse(_, s1, s2, _) =>
-        val newNode = SimpleNode(stmt)
-        g += currentNode ~> newNode
-        build(build(g, s1, newNode, targetNode), s2, newNode, targetNode)
-      case While(_, s, _) =>
-        val newNode = SimpleNode(stmt)
-        g += currentNode ~> newNode
-        g += newNode ~> targetNode
-        build(g, s, newNode, newNode)
-      case Skip(_) =>
-        val newNode = SimpleNode(stmt)
-        g += currentNode ~> newNode
-        g += newNode ~> targetNode
-      case Sequence(s1, s2) =>
-        build(build(g, s1, currentNode, first(s2)), s2, last(s1), targetNode)
+      case Assignment(_, _, _) => Set.empty
+      case Skip(_) => Set.empty
+      case Sequence(s1, s2) => flow(s1) union flow(s2) union finalStmt(s1).map(from => (from, initStmt(s2)))
+      case IfThenElse(_, s1, s2, _) => flow(s1) union flow(s2) union Set((Node(stmt), initStmt(s1)), (Node(stmt), initStmt(s2)))
+      case While(_, s, _) => flow(s) union Set((Node(stmt), initStmt(s))) union finalStmt(s).map(from => (from, Node(stmt)))
     }
   }
 
@@ -80,9 +53,9 @@ object CFGBuilder {
    *
    * @see Section 2.1 of Principles of Program Analysis
    */
-  private def first(stmt: Stmt) : GraphNode = stmt match {
-    case Sequence(s1, _) => first(s1)
-    case _ => SimpleNode(stmt)
+  private def initStmt(stmt: Stmt) : GraphNode = stmt match {
+    case Sequence(s1, _) => initStmt(s1)
+    case _ => Node(stmt)
   }
 
   /*
@@ -90,8 +63,9 @@ object CFGBuilder {
    *
    * @see Section 2.1 of Principles of Program Analysis
    */
-  private def last(stmt: Stmt) : GraphNode = stmt match {
-    case Sequence(_, s2) => last(s2)
-    case _ => SimpleNode(stmt)
+  private def finalStmt(stmt: Stmt) : Set[GraphNode] = stmt match {
+    case Sequence(_, s2) => finalStmt(s2)
+    case IfThenElse(_, thenStmt, elseStmt, _) => finalStmt(thenStmt) union finalStmt(elseStmt)
+    case _ => Set(Node(stmt))
   }
 }

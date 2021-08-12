@@ -11,13 +11,10 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
   test("Test simple CFG") {
     val stmt = Assignment("x", Const(4), 1)
     val program = WhileProgram(stmt)
-    val sn = SimpleNode(stmt)
+    val sn = Node(stmt)
     val g = CFGBuilder.build(program)
 
-    val expected = Graph[GraphNode, GraphEdge.DiEdge]()
-
-    expected += StartNode ~> sn
-    expected += sn ~> EndNode
+    val expected = Set()
 
     assert(expected == g)
   }
@@ -34,19 +31,15 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
 
     val g = CFGBuilder.build(p)
 
-    val expected = Graph[GraphNode, GraphEdge.DiEdge]()
+    val expected: Set[(Node, Node)] =
+      Set((Node(d1), Node(d2))
+         ,(Node(d2), Node(w1))
+         ,(Node(w1), Node(d3))
+         ,(Node(d3), Node(d4))
+         ,(Node(d4), Node(w1))
+         ,(Node(w1), Node(d5)))
 
-    expected += StartNode ~> SimpleNode(d1)
-    expected += SimpleNode(d1) ~> SimpleNode(d2)
-    expected += SimpleNode(d2) ~> SimpleNode(w1)
-    expected += SimpleNode(w1) ~> SimpleNode(d3)
-    expected += SimpleNode(d3) ~> SimpleNode(d4)
-    expected += SimpleNode(d4) ~> SimpleNode(w1)
-    expected += SimpleNode(w1) ~> SimpleNode(d5)
-    expected += SimpleNode(d5) ~> EndNode
 
-    assert(8 == g.nodes.size)
-    assert(8 == g.edges.size)
     assert(expected == g)
   }
 
