@@ -7,7 +7,7 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
   test("Test simple CFG") {
     val stmt = Assignment("x", Const(4), 1)
     val program = WhileProgram(stmt)
-    val sn = Node(stmt)
+
     val g = CFGBuilder.build(program)
 
     val expected = Set()
@@ -27,13 +27,13 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
 
     val g = CFGBuilder.build(p)
 
-    val expected: Set[(Node, Node)] =
-      Set((Node(d1), Node(d2))
-         ,(Node(d2), Node(w1))
-         ,(Node(w1), Node(d3))
-         ,(Node(d3), Node(d4))
-         ,(Node(d4), Node(w1))
-         ,(Node(w1), Node(d5)))
+    val expected: Set[(Stmt, Stmt)] =
+      Set((d1, d2)
+         ,(d2, w1)
+         ,(w1, d3)
+         ,(d3, d4)
+         ,(d4, w1)
+         ,(w1, d5))
 
     assert(expected == g)
   }

@@ -1,27 +1,13 @@
 package br.unb.cic.wlang
 
 
-/**
- * The root of the hierarchy of the
- * control-flow graph nodes.
- */
-abstract class GraphNode
-
-
-/**
- * Represents a real node from the function or program statements
- *
- * @param stmt the statement of a program or function
- */
-case class Node(stmt: Stmt) extends GraphNode
-
 
 /**
  * An Scala object responsible for building control
  * flow graphs from a While program.
  */
 object CFGBuilder {
-  type CFG = Set[(GraphNode, GraphNode)]
+  type CFG = Set[(Stmt, Stmt)]
   /**
    * Builds a control flow graph from a given While program.
    *
@@ -30,6 +16,15 @@ object CFGBuilder {
    * @return The control-flow graph of the While program
    */
   def build(program: WhileProgram): CFG = flow(program.stmt)
+
+  def stmts(program: WhileProgram): Set[Stmt] = stmts(program.stmt)
+  def stmts(stmt: Stmt): Set[Stmt] = stmt match {
+    case Assignment(_, _, _) => Set(stmt)
+    case Skip(_) => Set(stmt)
+    case While(_, s, _) => Set(stmt) union stmts(s)
+    case IfThenElse(_, s1, s2, _) => Set(stmt) union (stmts(s1) union stmts(s2))
+    case Sequence(s1, s2) => stmts(s1) union stmts(s2)
+  }
 
   /*
    * The "core" of the algorithm for building
@@ -43,8 +38,8 @@ object CFGBuilder {
       case Assignment(_, _, _) => Set.empty
       case Skip(_) => Set.empty
       case Sequence(s1, s2) => flow(s1) union flow(s2) union finalStmt(s1).map(from => (from, initStmt(s2)))
-      case IfThenElse(_, s1, s2, _) => flow(s1) union flow(s2) union Set((Node(stmt), initStmt(s1)), (Node(stmt), initStmt(s2)))
-      case While(_, s, _) => flow(s) union Set((Node(stmt), initStmt(s))) union finalStmt(s).map(from => (from, Node(stmt)))
+      case IfThenElse(_, s1, s2, _) => flow(s1) union flow(s2) union Set((stmt, initStmt(s1)), (stmt, initStmt(s2)))
+      case While(_, s, _) => flow(s) union Set((stmt, initStmt(s))) union finalStmt(s).map(from => (from, stmt))
     }
   }
 
@@ -53,9 +48,9 @@ object CFGBuilder {
    *
    * @see Section 2.1 of Principles of Program Analysis
    */
-  private def initStmt(stmt: Stmt) : GraphNode = stmt match {
+   def initStmt(stmt: Stmt) : Stmt = stmt match {
     case Sequence(s1, _) => initStmt(s1)
-    case _ => Node(stmt)
+    case _ => stmt
   }
 
   /*
@@ -63,9 +58,9 @@ object CFGBuilder {
    *
    * @see Section 2.1 of Principles of Program Analysis
    */
-  private def finalStmt(stmt: Stmt) : Set[GraphNode] = stmt match {
+   def finalStmt(stmt: Stmt) : Set[Stmt] = stmt match {
     case Sequence(_, s2) => finalStmt(s2)
     case IfThenElse(_, thenStmt, elseStmt, _) => finalStmt(thenStmt) union finalStmt(elseStmt)
-    case _ => Set(Node(stmt))
+    case _ => Set(stmt)
   }
 }
