@@ -3,7 +3,7 @@ package br.unb.cic.wlang
 import scala.collection.mutable
 
 /**
- * Implementation of the ReachDefinition
+ * Implementation of the Reaching Definition
  * algorithm.
  */
 object ReachDefinition {
@@ -27,10 +27,9 @@ object ReachDefinition {
     while(!fixedPoint) {
       val (oldIn, oldOut) = (in.clone(), out.clone())
       for(s <- stmts) {
-        //IN[S] = U {OUT[to] | (from, to) in cfg, S == to}
+        //IN[S] = U {OUT[from] | (from, to) in cfg, S == to}
         //This is not so beautiful in Scala =(
-        in(s) =  (for { (from,to) <- cfg if to == s } yield out.getOrElse(from, empty))
-          .foldLeft(empty)(_ union _)
+        in(s) =  (for { (from,to) <- cfg if to == s } yield out(from)).foldLeft(empty)(_ union _)
 
         //OUT[S] = GEN(S) U (IN[S] - KILL[S])
         out(s) = gen(s) union (in.getOrElse(s, empty) diff kill(s, universalSet))
