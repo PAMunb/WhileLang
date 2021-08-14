@@ -7,12 +7,11 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
   test("Test simple CFG") {
     val stmt = Assignment("x", Const(4), 1)
     val program = WhileProgram(stmt)
+    val resultCFG = CFGBuilder.build(program)
 
-    val g = CFGBuilder.build(program)
+    val expectedCFG = Set.empty
 
-    val expected = Set()
-
-    assert(expected == g)
+    assert(expectedCFG == resultCFG)
   }
 
   test("Test factorial CFG") {
@@ -23,19 +22,19 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
     val w1 = While(GT(Var("y"), Const(1)), Sequence(d3, d4), 3)
     val d5 = Assignment("y", Const(0), 6)
 
-    val p = WhileProgram(Sequence(d1, Sequence(d2, Sequence(w1, d5))))
+    val program = WhileProgram(Sequence(d1, Sequence(d2, Sequence(w1, d5))))
 
-    val g = CFGBuilder.build(p)
+    val resultCFG = CFGBuilder.build(program)
 
-    val expected: Set[(Stmt, Stmt)] =
-      Set((d1, d2)
-         ,(d2, w1)
-         ,(w1, d3)
-         ,(d3, d4)
-         ,(d4, w1)
-         ,(w1, d5))
+    val expectedCFG =
+      Set((d1.label, d2.label)
+         ,(d2.label, w1.label)
+         ,(w1.label, d3.label)
+         ,(d3.label, d4.label)
+         ,(d4.label, w1.label)
+         ,(w1.label, d5.label))
 
-    assert(expected == g)
+    assert(expectedCFG == resultCFG)
   }
 
 }
