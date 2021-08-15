@@ -27,25 +27,25 @@ object ReachDefinition {
     while(!fixedPoint) {
       val (oldIn, oldOut) = (in.clone(), out.clone())
       for(s <- stmts) {
-        //IN[S] = U {OUT[from] | (from, to) in cfg, S == to}
+        //IN[S] = U {OUT[from] | (from, to) in cfg, S == to}  //OK conforme definição do livro para o RDEntry(to)
         //This is not so beautiful in Scala =(
-        in(s) =  (for { (from,to) <- cfg if to == s } yield out(from)).foldLeft(empty)(_ union _)
+        in(s) =  (for { (from,to) <- cfg if to == s } yield out(from)).foldLeft(empty)(_ union _) //não consegui ler esse trecho
 
-        //OUT[S] = GEN(S) U (IN[S] - KILL[S])
-        out(s) = gen(s) union (in.getOrElse(s, empty) diff kill(s, universalSet))
+        //OUT[S] = GEN(S) U (IN[S] - KILL[S]) //OK conforme definição do livro para o RDexit(to)
+        out(s) = gen(s) union (in.getOrElse(s, empty) diff kill(s, universalSet)) //não consegui ler esse trecho
       }
-      fixedPoint = (oldIn, oldOut) == (in, out)
+      fixedPoint = (oldIn, oldOut) == (in, out) //Se não há mais alterações nos conjuntos entre RDentry(from), RDexit(from) e RDentry(to), RDexit(to) então chegou no fixed point e sai do laço
     }
     (in, out)
   }
 
-  def initOutSet(stmts: Set[Stmt]): DS = {
+  def initOutSet(stmts: Set[Stmt]): DS = { //inicializa os sets dos stmts como vazio? ok!
     val out = new DS()
     stmts.foreach(s => out += s -> empty)
     out
   }
 
-  def initUniversalSet(stmt: Stmt): Abstraction = stmt match  {
+  def initUniversalSet(stmt: Stmt): Abstraction = stmt match  { //não entendi a necessidade desse inituniversal
     case Assignment(v, _, _) => Set((v, stmt))
     case Skip(_) => Set.empty
     case IfThenElse(_, s1, s2, _) => initUniversalSet(s1) union initUniversalSet(s2)
@@ -54,12 +54,12 @@ object ReachDefinition {
   }
 
   def kill(stmt: Stmt, universalSet: Abstraction): Abstraction = stmt match {
-    case Assignment(v, _, _) => universalSet.filter(t => v == t._1)
+    case Assignment(v, _, _) => universalSet.filter(t => v == t._1) //filtra true/false mas não entendi como o 't._1' é true somente p/ assignments a 'v'
     case _ => Set.empty
   }
 
   def gen(stmt: Stmt): Abstraction = stmt match {
-    case Assignment(v, _, _) => Set((v,stmt))
+    case Assignment(v, _, _) => Set((v,stmt))  //v = nome da variável que está sendo definida no Assignment
     case _ => Set.empty
   }
 
