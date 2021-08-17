@@ -14,7 +14,7 @@ case class WhileProgram(stmt: Stmt)
  */
 abstract class AExp
 abstract class BExp
-abstract class Stmt
+
 
 /* Concrete implementations of AExp */
 case class Var(name: String) extends AExp                // variables
@@ -33,10 +33,17 @@ case class Or(Left: BExp, right: BExp) extends BExp
 case class Eq(left: AExp, right: AExp) extends BExp
 case class GT(left: AExp, right: AExp) extends BExp
 
-/* Concrete implementations of Statements */
+trait Block
 
-case class Assignment(name: String, exp: AExp, label: Int) extends Stmt
-case class Sequence(s1: Stmt, s2: Stmt) extends Stmt   // s1;s2
-case class IfThenElse(condition: BExp, thenStmt: Stmt, elseStmt: Stmt, label: Int) extends Stmt
-case class While(condition: BExp, stmt: Stmt, label: Int) extends Stmt
-case class Skip(label: Int) extends Stmt
+abstract class Stmt
+abstract class ElementaryStmt extends Stmt with Block
+abstract class CompositeStmt extends Stmt
+
+/* Concrete implementations of Statements */
+case class Condition(exp: BExp, label: Int) extends Block
+
+case class Assignment(name: String, exp: AExp, label: Int) extends ElementaryStmt
+case class Sequence(s1: Stmt, s2: Stmt) extends CompositeStmt   // s1;s2
+case class IfThenElse(condition: Condition, thenStmt: Stmt, elseStmt: Stmt) extends CompositeStmt
+case class While(condition: Condition, stmt: Stmt) extends CompositeStmt
+case class Skip(label: Int) extends ElementaryStmt
