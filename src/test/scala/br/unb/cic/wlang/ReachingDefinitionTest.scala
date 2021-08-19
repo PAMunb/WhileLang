@@ -1,9 +1,9 @@
 package br.unb.cic.wlang
 
-import br.unb.cic.wlang.ReachDefinition.undef
+import br.unb.cic.wlang.ReachingDefinition.undef
 import org.scalatest.funsuite.AnyFunSuite
 
-class ReachDefinitionTest extends  AnyFunSuite {
+class ReachingDefinitionTest extends  AnyFunSuite {
 
   val d1 = Assignment("y", Var("x"), 1)
   val d2 = Assignment("z", Const(1), 2)
@@ -16,7 +16,7 @@ class ReachDefinitionTest extends  AnyFunSuite {
 
 
   test("Test case for reach definition") {
-    val (in, out) = ReachDefinition.execute(p)
+    val (in, out) = ReachingDefinition.execute(p)
 
     assert(in(1) == Set(("x", undef), ("y", undef), ("z", undef)))
     assert(out(1) == Set(("x", undef), ("y", 1), ("z", undef)))
