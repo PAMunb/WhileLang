@@ -50,14 +50,14 @@ object WhileProgram {
   }
 
   /* finds a specific block with a label within the statement stmt */
-  def block(label: Int, program: WhileProgram): Option[Block] = blocks(program.stmt).find(b => b.label == label)
+  def block(label: Label, program: WhileProgram): Option[Block] = blocks(program.stmt).find(b => b.label == label)
 
   /*
    * Returns the first statement of a given statement.
    *
    * @see Section 2.1 of Principles of Program Analysis
    */
-  def initLabel(stmt: Stmt) : Int = stmt match {
+  def initLabel(stmt: Stmt) : Label = stmt match {
     case Assignment(_, _, label) => label
     case Skip(label) => label
     case Sequence(s1, _) => initLabel(s1)
@@ -70,7 +70,7 @@ object WhileProgram {
    *
    * @see Section 2.1 of Principles of Program Analysis
    */
-  def finalLabels(stmt: Stmt) : Set[Int] = stmt match {
+  def finalLabels(stmt: Stmt) : Set[Label] = stmt match {
     case Assignment(_, _, label) => Set(label)
     case Skip(label) => Set(label)
     case Sequence(_, s2) => finalLabels(s2)
@@ -133,8 +133,10 @@ case class Or(Left: BExp, right: BExp) extends BExp
 case class Eq(left: AExp, right: AExp) extends BExp
 case class GT(left: AExp, right: AExp) extends BExp
 
+import WhileProgram.Label
+
 trait Block {
-  def label: Int
+  def label: Label
 }
 
 abstract class Stmt
@@ -142,10 +144,10 @@ abstract class ElementaryStmt extends Stmt with Block
 abstract class CompositeStmt extends Stmt
 
 /* Concrete implementations of Statements */
-case class Condition(exp: BExp, label: Int) extends Block
+case class Condition(exp: BExp, label: Label) extends Block
 
-case class Assignment(name: String, exp: AExp, label: Int) extends ElementaryStmt
+case class Assignment(name: String, exp: AExp, label: Label) extends ElementaryStmt
 case class Sequence(s1: Stmt, s2: Stmt) extends CompositeStmt   // s1;s2
 case class IfThenElse(condition: Condition, thenStmt: Stmt, elseStmt: Stmt) extends CompositeStmt
 case class While(condition: Condition, stmt: Stmt) extends CompositeStmt
-case class Skip(label: Int) extends ElementaryStmt
+case class Skip(label: Label) extends ElementaryStmt
