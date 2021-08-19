@@ -7,14 +7,18 @@ package br.unb.cic.wlang
  */
 case class WhileProgram(stmt: Stmt)
 
+object WhileProgram {
+
+}
+
 /* The abstract classes
  *   - AExp: Arithmetic expressions
  *   - BExp: Binary expressions
  *   - Stmt: Statements
  */
+
 abstract class AExp
 abstract class BExp
-
 
 /* Concrete implementations of AExp */
 case class Var(name: String) extends AExp                // variables
@@ -33,7 +37,9 @@ case class Or(Left: BExp, right: BExp) extends BExp
 case class Eq(left: AExp, right: AExp) extends BExp
 case class GT(left: AExp, right: AExp) extends BExp
 
-trait Block
+trait Block {
+  def label: Int
+}
 
 abstract class Stmt
 abstract class ElementaryStmt extends Stmt with Block

@@ -13,9 +13,7 @@ object CFGBuilder {
    *
    * @return The control-flow graph of the While program
    */
-  def build(program: WhileProgram): CFG = flow(program.stmt)
-
-
+  def flow(program: WhileProgram): CFG = flow(program.stmt)
 
 
 def blocks(stmt: Stmt) : Set[Block] = stmt match {
@@ -44,7 +42,7 @@ def blocks(stmt: Stmt) : Set[Block] = stmt match {
    *
    * (for { from <- finalStmt(s1) } yield (from, initStatement(s2)))
    */
-  private def flow(stmt: Stmt): CFG = {
+   def flow(stmt: Stmt): CFG = {
     stmt match {
       case Assignment(_, _, _) => Set.empty
       case Skip(_) => Set.empty

@@ -8,7 +8,7 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
     val stmt = Assignment("x", Const(4), 1)
     val program = WhileProgram(stmt)
 
-    val g = CFGBuilder.build(program)
+    val g = CFGBuilder.flow(program)
 
     val expected = Set()
 
@@ -25,7 +25,7 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
 
     val p = WhileProgram(Sequence(d1, Sequence(d2, Sequence(w1, d5))))
 
-    val g = CFGBuilder.build(p)
+    val g = CFGBuilder.flow(p)
 
     val expected: Set[(Int, Int)] =
       Set((1, 2)
