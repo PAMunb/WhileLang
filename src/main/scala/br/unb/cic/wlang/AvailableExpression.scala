@@ -21,16 +21,16 @@ object AvailableExpression {
     // avoids infinite loops.
     val entry: mutable.HashMap[Int, Abstraction] = mutable.HashMap()
     val exit: mutable.HashMap[Int, Abstraction] = mutable.HashMap()
-    val nonTrivialExpressionSet: Set[Exp] = nonTrivialExpression(program)   // Conjunto de todas as non-trivial-expressions do programa -> não consegui usar
+    val nonTrivialExpressionSet: Set[Exp] = nonTrivialExpression(program)   // Conjunto de todas as non-trivial-expressions do programa -> não consegui usar na kill e gen
 
     // we need to initialize exit..., since we have
     // to first compute entry[l] from exit[l]. after
     // that, we recompute exit[l] from entry[l].
     for (label <- labels(program)) {
-      exit(label) = empty
+      exit(label) = empty    //exit(label) = nonTrivialExpressionSet não funcionou, os mesmos asserts apresentaram erro
     }
 
-    do {
+    do {                           // faça...até, executa ao menos uma vez
       val entryOld = entry.clone()
       val exitOld = exit.clone()
 
@@ -42,9 +42,15 @@ object AvailableExpression {
             // ⋂ { exit(from) | (from, to) <- flow(program) and to == label}
             // conforme equação da página 38 (49 no pdf) do PPA
             var res = empty
+            var acc = empty               
+            //var res = nonTrivialExpressionSet //res = nonTrivialExpressionSet não funcionou, mas pode ser a gen o problema
             for ((from, to) <- flow(program) if to == label) {  // | (ℓ',ℓ) ∈ flow(S*), sendo S* os stmt do program
-              res = exit(from) intersect res                    //⋂ {AExit(ℓ') 
-            }
+              // acc.++(exit(from))
+              res = exit(from) intersect res                    // ⋂ { AExit(ℓ') } -> lembrar: o {exit(from)} == entry(to)
+              
+              if (res == empty) 
+                res = exit(from) intersect acc   //encontrar a 'largest solution' página 38-39 (49-50 no PDF) do livro PPA
+              }
             res
           }
         val b = block(label, program) // block with a given label *label*
