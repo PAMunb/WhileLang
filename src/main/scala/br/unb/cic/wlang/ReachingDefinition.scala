@@ -13,7 +13,7 @@ object ReachingDefinition {
   type Abstraction = Set[(String, Label)]
   type DS = mutable.HashMap[Int, Abstraction]
 
-  val empty: Abstraction = Set.empty
+  val bottom: Abstraction = Set.empty
 
   val undef = -1   // this is the equivalent to the undef label in the book (?)
 
@@ -31,7 +31,7 @@ object ReachingDefinition {
     // to first compute entry[l] from exit[l]. after
     // that, we recompute exit[l] from entry[l].
     for(label <- labels(program)) {
-      exit(label) = empty
+      exit(label) = bottom
     }
 
     do {
@@ -46,7 +46,7 @@ object ReachingDefinition {
             // U { exit(from) | (from, to) <- flow(program) and to == label}
             // we could have implemented this using foldl, though I hope this
             // solution here is easier to understand.
-            var res = empty
+            var res = bottom
             for((from, to) <- flow(program) if to == label) {
               res = exit(from) union res
             }
