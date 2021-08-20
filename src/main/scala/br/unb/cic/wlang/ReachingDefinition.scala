@@ -10,7 +10,7 @@ import WhileProgram.{Label, labels, block, initLabel, fv, assignments}
  */
 object ReachingDefinition {
 
-  type Abstraction = Set[(String, Int)]
+  type Abstraction = Set[(String, Label)]
   type DS = mutable.HashMap[Int, Abstraction]
 
   val empty: Abstraction = Set.empty
