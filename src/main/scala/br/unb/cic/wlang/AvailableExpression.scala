@@ -42,8 +42,8 @@ object AvailableExpression {
             // ⋂ { exit(from) | (from, to) <- flow(program) and to == label}
             // conforme equação da página 38 (49 no pdf) do PPA
             var res = empty
-            for ((from, to) <- flow(program) if to == label) {
-              res = exit(from) intersect res
+            for ((from, to) <- flow(program) if to == label) {  // | (ℓ',ℓ) ∈ flow(S*), sendo S* os stmt do program
+              res = exit(from) intersect res                    //⋂ {AExit(ℓ') 
             }
             res
           }
@@ -58,15 +58,15 @@ object AvailableExpression {
   /* kill definition according to Table 2.1 of the PPA book */
   def kill(block: Block, program: WhileProgram): Set[Exp] =
     block match {
-      case Assignment(x, exp, label) => nonTrivialExpression(exp)  //killAE({X := a}^l) = {a' ∈ AExp*, | x ∈ FV(a')}
+      case Assignment(x, exp, label) => nonTrivialExpression(exp)  //killAE({X := a}ℓ) = {a' ∈ AExp*, | x ∈ FV(a')}
        //onTrivialExpressionSet[exp.left] union nonTrivialExpressionSet[exp.right] -> não encontra o nteSet pq?
       case Skip(_)         => Set.empty
       case Condition(_, _) => Set.empty
     }
 
-  /* gen definition according to Table 2.2 of the PPL book */
+  /* gen definition according to Table 2.1 of the PPA book */
   def gen(block: Block): Set[Exp] = block match {
-    case Assignment(x, exp, label) => nonTrivialExpression(exp) //genAE({X := a}^l) = {a' ∈ AExp*, | x ∉ FV(a')} -> creio que esteja errado
+    case Assignment(x, exp, label) => nonTrivialExpression(exp) //genAE({X := a}ℓ) = {a' ∈ AExp*, | x ∉ FV(a')} -> creio que esteja errado
     case Skip(_)                 => Set.empty
     case Condition(b, _)         => nonTrivialExpression(b)
   }
