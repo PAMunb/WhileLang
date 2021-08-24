@@ -60,4 +60,32 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
 
     assert(expectedCFG == resultCFG)
   }
+  test("Build reverse CFG example 2.8") {
+    val exprAGTB = OpRelat("GT", Var("a"), Var("b"))
+    val exprBMinusA = OpArith("Minus",Var("b"), Var("a"))
+    val exprAMinusB = OpArith("Minus",Var("a"), Var("b"))
+
+    val program =
+      WhileProgram(
+        IfThenElse(
+          Condition(exprAGTB,1),
+          Sequence(Assignment("x", exprBMinusA, 2), Assignment("y", exprAMinusB, 3)),
+          Sequence(Assignment("y", exprBMinusA,4), Assignment("x", exprAMinusB, 5))
+        )
+      )
+
+
+    val resultCFG = CFGBuilder.buildR(program)
+
+    val expectedCFG =
+      Set(
+        (5, 4)
+        ,(3, 2)
+        ,(2, 1)
+        ,(4, 1)
+      )
+
+    assert(expectedCFG == resultCFG)
+  }
+
 }

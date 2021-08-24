@@ -1,19 +1,27 @@
 package br.unb.cic.wlang
 
 /**
-  * An Scala object responsible for building control
-  * flow graphs from a While program.
-  */
+ * An Scala object responsible for building control
+ * flow graphs from a While program.
+ */
 object CFGBuilder {
   type CFG = Set[(Int, Int)]
 
   /**
-    * Builds a control flow graph from a given While program.
-    *
-    * @param program a While program
-    * @return The control-flow graph of the While program
-    */
+   * Builds a control flow graph from a given While program.
+   *
+   * @param program a While program
+   * @return The control-flow graph of the While program
+   */
   def build(program: WhileProgram): CFG = flow(program.stmt)
+
+  /**
+   * Builds a control flow graph from a given While program.
+   *
+   * @param program a While program
+   * @return The control-flow graph of the While program
+   */
+  def buildR(program: WhileProgram): CFG = flowR(program.stmt)
 
   /*
    * Returns the first label of a given statement.
@@ -59,4 +67,7 @@ object CFGBuilder {
       case While(Condition(_, l), s) =>
         flow(s) union Set((l, initLabel(s))) union finalLabel(s).map(from => (from, l))
     }
+
+  def flowR(stmt: Stmt): CFG =
+    flow(stmt).map({ case (from, to) => (to, from)})
 }
