@@ -89,12 +89,20 @@ object WhileProgram {
 
   def fv(exp: AExp): Set[String] = exp match {
     case Var(name) => Set(name)
-    case Const(_) => Set()
+    case Const(_) => Set() // == Set.empty
     case Add(l, r) => fv(l) union fv(r)
     case Sub(l, r) => fv(l) union fv(r)
     case Mult(l, r) => fv(l) union fv(r)
   }
 
+  def fv(exp: BExp): Set[String] = exp match {
+    case Not(_) => Set.empty
+    case And(_, _) => Set.empty
+    case Or(_, _) => Set.empty
+    case Eq(vl, vr) => fv(vl) union fv(vr)
+    case GT(vl, vr) => fv(vl) union fv(vr)
+  } 
+ 
   def assignments(program: WhileProgram): Set[(String, Label)] = assignments(program.stmt)
 
   private def assignments(stmt: Stmt): Set[(String, Label)] = stmt match {
@@ -103,6 +111,16 @@ object WhileProgram {
     case Sequence(s1, s2) => assignments(s1) union assignments(s2)
     case IfThenElse(_, s1, s2) => assignments(s1) union assignments(s2)
     case While(_, s) => assignments(s)
+  }
+
+  def variables(program: WhileProgram): Set[String] = variables(program.stmt)
+
+  private def variables(stmt: Stmt): Set[String] = stmt match {
+    case Assignment(v, _, label) => Set(v)
+    case Skip(_) => Set.empty
+    case Sequence(s1, s2) => variables(s1) union variables(s2)
+    case IfThenElse(_, s1, s2) => variables(s1) union variables(s2)
+    case While(_, s) => variables(s)
   }
 
   def expHasVariable(x: String, exp: Exp): Boolean = exp match {

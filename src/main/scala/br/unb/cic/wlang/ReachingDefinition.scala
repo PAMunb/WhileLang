@@ -42,7 +42,7 @@ object ReachingDefinition {
           if (label == initLabel(program.stmt))
             fv(program.stmt).map(v => (v, undef)) // { (x, ?) | x ∈ FV(S) }  S=program.stmt as of Table 2.2 on page 41 of the PPA book
           else {
-            // ⋂ { exit(from) | (from, to) <- flow(program) and to == label}
+            // ⋃ { exit(from) | (from, to) <- flow(program) and to == label}
             // according to Table 2.2 on page 41 of the PPA book
             // we could have implemented this using foldLeft, though I hope this
             // solution here is easier to understand.

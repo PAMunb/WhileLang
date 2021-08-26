@@ -5,6 +5,7 @@
 .metals/
 .vscode/
 .bsp/
+.bsp
 #.scalafmt.conf
 project/
 
