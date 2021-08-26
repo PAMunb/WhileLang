@@ -104,6 +104,14 @@ object WhileProgram {
     case IfThenElse(_, s1, s2) => assignments(s1) union assignments(s2)
     case While(_, s) => assignments(s)
   }
+
+  def expHasVariable(x: String, exp: Exp): Boolean = exp match {
+    case Var(v) => v == x
+    case Const(_) => false
+    case Add(left, right) => expHasVariable(x, left) || expHasVariable(x, right)
+    case Sub(left, right) => expHasVariable(x, left) || expHasVariable(x, right)
+    case Mult(left, right) => expHasVariable(x, left) || expHasVariable(x, right)
+  }
 }
 
 /* The abstract classes
