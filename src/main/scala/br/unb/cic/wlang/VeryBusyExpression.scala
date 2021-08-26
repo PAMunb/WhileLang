@@ -1,10 +1,12 @@
 package br.unb.cic.wlang
+
 import scala.collection.mutable
 import CFGBuilder.{flow, flowR}
 import WhileProgram.{Label, labels, block, initLabel, finalLabels, fv, nonTrivialExpression, expHasVariable}
 
-/* Implementation of the Available Expression algorithm.
- */
+/* 
+ Implementation of the Available Expression algorithm.
+*/
 object VeryBusyExpression {
   type Abstraction = Set[(Exp)] //for VB the Abstraction is AExp according to Page 45 of the PPA Book.
   type DS = mutable.HashMap[Int, Abstraction] //(label, Set[Exp])
@@ -62,14 +64,14 @@ object VeryBusyExpression {
   }
 
   /* kill definition according to Table 2.3 of the PPA book */
-  def kill(block: Block, program: WhileProgram): Set[Exp] = block match {
+  def kill(block: Block, program: WhileProgram): Abstraction = block match {
     case Assignment(x, exp, label) => nonTrivialExpression(program).filter(exp => expHasVariable(x, exp)) //killVB({X := a}ℓ) = {a' ∈ AExp*, | x ∈ FV(a')}
     case Skip(_)                   => Set.empty
     case Condition(_, _)           => Set.empty
   }
 
   /* gen definition according to Table 2.3 of the PPA book */
-  def gen(block: Block): Set[Exp] = block match {
+  def gen(block: Block): Abstraction = block match {
     case Assignment(x, a, label) => nonTrivialExpression(a) //genVB({X := a}ℓ) = AExp(a)
     case Skip(_)                   => Set.empty
     case Condition(b, _)           => nonTrivialExpression(b) //genVB({b}ℓ) = AExp(b)

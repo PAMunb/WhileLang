@@ -4,8 +4,9 @@ import scala.collection.mutable
 import CFGBuilder.{flow, flowR}
 import WhileProgram.{Label, labels, block, finalLabels, fv, variables, expHasVariable}
 
-/** Implementation of the Live Variable algorithm.
-  */
+/*
+ Implementation of the Live Variable algorithm.
+*/
 object LiveVariable {
   type Abstraction = Set[String] //for LV the Abstraction is a set of String,Label such that String is the variable of interest
   type DS = mutable.HashMap[Int, Abstraction]

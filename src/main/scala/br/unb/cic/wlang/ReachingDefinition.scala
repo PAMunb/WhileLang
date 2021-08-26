@@ -4,9 +4,9 @@ import scala.collection.mutable
 import CFGBuilder.flow
 import WhileProgram.{Label, labels, block, initLabel, fv, assignments}
 
-/**
- * Implementation of the Reaching Definition algorithm.
- */
+/*
+ Implementation of the Reaching Definition algorithm.
+*/
 object ReachingDefinition {
 
   type Abstraction = Set[(String, Label)] //for RD the Abstraction is (String,Label) such that String is the variable of interest
@@ -62,7 +62,8 @@ object ReachingDefinition {
   }
 
   /* kill definition according to Table 2.2 of the PPA book */
-  def kill(block: Block, program: WhileProgram): Set[(String, Label)] = block match {
+  // def kill(block: Block, program: WhileProgram): Set[(String, Label)] = block match {
+  def kill(block: Block, program: WhileProgram): Abstraction = block match {
     case Assignment(x, _, label) =>
       Set((x, undef)) union assignments(program).filter( { case (v, l) => v == x && l != label } )
     case Skip(_) => Set.empty
@@ -70,7 +71,8 @@ object ReachingDefinition {
   }
 
   /* gen definition according to Table 2.2 of the PPA book */
-  def gen(block: Block): Set[(String, Label)] = block match {
+  // def gen(block: Block): Set[(String, Label)] = block match {
+  def gen(block: Block): Abstraction = block match {
     case Assignment(x, _, label) => Set((x,label))
     case Skip(_) => Set.empty
     case Condition(_, _) => Set.empty

@@ -4,8 +4,9 @@ import scala.collection.mutable
 import CFGBuilder.flow
 import WhileProgram.{Label, labels, block, initLabel, fv, nonTrivialExpression, expHasVariable}
 
-/** Implementation of the Available Expression algorithm.
-  */
+/*
+ Implementation of the Available Expression algorithm.
+*/
 object AvailableExpression {
 
   type Abstraction = Set[(Exp)] //for AE the Abstraction is not (String,Label) like RD, it is AExp according to Page 38 of the PPA Book.
@@ -60,14 +61,16 @@ object AvailableExpression {
   }
 
   /* kill definition according to Table 2.1 of the PPA book */
-  def kill(block: Block, program: WhileProgram): Set[Exp] = block match {
+  // def kill(block: Block, program: WhileProgram): Set[Exp] = block match {
+    def kill(block: Block, program: WhileProgram): Abstraction = block match {
     case Assignment(x, exp, label) => nonTrivialExpression(program).filter(exp => expHasVariable(x, exp)) //killAE({X := a}ℓ) = {a' ∈ AExp*, | x ∈ FV(a')}
     case Skip(_)                   => Set.empty
     case Condition(_, _)           => Set.empty
   }
 
   /* gen definition according to Table 2.1 of the PPA book */
-  def gen(block: Block): Set[Exp] = block match {
+  // def gen(block: Block): Set[Exp] = block match {
+  def gen(block: Block): Abstraction = block match {
     case Assignment(x, exp, label) => nonTrivialExpression(exp).filterNot(exp => expHasVariable(x, exp)) //genAE({X := a}ℓ) = {a' ∈ AExp(a), | x ∉ FV(a')}
     case Skip(_)                   => Set.empty
     case Condition(b, _)           => nonTrivialExpression(b) //genAE({b}ℓ) = AExp(b)
