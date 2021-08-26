@@ -28,4 +28,8 @@ Springer Publishing Company, Incorporated.
    * [ ] intraprocedural data-flow analysis (Chapter II)
    * [ ] interprocedural data-flow analysis (Chapter II)
 
-
+At this moment the four basic data flow analysis were implemented:
+   * Available Expressions Analysis
+   * Reaching Definitions Analysis
+   * Very Busy Expressions Analysis
+   * Live Variables Analysis
