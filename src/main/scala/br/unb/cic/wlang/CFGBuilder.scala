@@ -17,6 +17,15 @@ object CFGBuilder {
    */
   def flow(program: WhileProgram): CFG = flow(program.stmt)
 
+ /**
+   * Builds the reversed control flow graph from a given While program.
+   *
+   * @param program a While program
+   *
+   * @return The control-flow graph of the While program
+   */
+  def flowR(program: WhileProgram): CFG = flow(program.stmt).map({ case (a, b) => (b, a) }) // why do I need the 'case'?
+
   /*
    * The "core" of the algorithm for building
    * control-flow graphs. Here we use pattern

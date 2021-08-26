@@ -46,7 +46,7 @@ object AvailableExpression {
             // according to Table 2.1 on page 38 of the PPA book
             var res = bottom
             for ((from, to) <- flow(program) if to == label) { // | (ℓ',ℓ) ∈ flow(S*), sendo S* os stmt do program
-              res = exit(from) intersect res // ⋂ { AExit(ℓ') } -> lembrar: o {exit(from)} == entry(to)
+              res = exit(from) intersect res // ⋂ { AExit(ℓ') } -> remember: {exit(from)} == entry(to)
               // println("(from,to) - exit(from) => res: (" + from + "," + to + ") - " + exit(from) + " => " + res)
             }
             res
@@ -70,6 +70,6 @@ object AvailableExpression {
   def gen(block: Block): Set[Exp] = block match {
     case Assignment(x, exp, label) => nonTrivialExpression(exp).filterNot(exp => expHasVariable(x, exp)) //genAE({X := a}ℓ) = {a' ∈ AExp(a), | x ∉ FV(a')}
     case Skip(_)                   => Set.empty
-    case Condition(b, _)           => nonTrivialExpression(b)
+    case Condition(b, _)           => nonTrivialExpression(b) //genAE({b}ℓ) = AExp(b)
   }
 }
