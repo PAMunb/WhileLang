@@ -73,7 +73,7 @@ object AvailableExpression {
         (from, to) <- flow(program.stmt)
         if to == label
       } yield abstraction.exit(from)).toList
-      sets.foldLeft[Set[AExp]](sets.head)((s1,s2) => s1 intersect s2)
+      sets.foldLeft[Set[AExp]](nonTrivialExpressions(program))((s1,s2) => s1 intersect s2)
     }
 
   }
