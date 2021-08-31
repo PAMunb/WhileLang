@@ -96,9 +96,9 @@ object WhileProgram {
   }
 
   def fv(exp: BExp): Set[String] = exp match {
-    case Not(_) => Set.empty
-    case And(_, _) => Set.empty
-    case Or(_, _) => Set.empty
+    case Not(v) => fv(v)
+    case And(vl, vr) => fv(vl) union fv(vr)
+    case Or(vl, vr) => fv(vl) union fv(vr)
     case Eq(vl, vr) => fv(vl) union fv(vr)
     case GT(vl, vr) => fv(vl) union fv(vr)
   } 
