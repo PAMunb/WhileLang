@@ -14,8 +14,7 @@ class ReachingDefinitionTest extends  AnyFunSuite {
 
   val p = WhileProgram(Sequence(d1, Sequence(d2, Sequence(w1, d5))))
 
-
-  test("Test case for reach definition") {
+  test("Test case for Reaching Definition") {
     val (in, out) = ReachingDefinition.execute(p)
 
     assert(in(1) == Set(("x", undef), ("y", undef), ("z", undef)))
