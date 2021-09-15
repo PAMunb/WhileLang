@@ -1,14 +1,29 @@
 package br.unb.cic.wlang
 
+import WhileProgram._
+
 /**
  * Abstract representation of a While Program.
  *
  * @param stmt The program main statement.
  */
-case class WhileProgram(stmt: Stmt)
+case class WhileProgram(declarations: List[Procedure], stmt: Stmt)
+
+case class Procedure(name: String, formalArgs: List[FormalArgument], ln: Label, stmt: Stmt, lx: Label)
+
+trait ParameterType
+
+case object ByValue extends ParameterType
+case object ByResult extends ParameterType
+
+case class FormalArgument(name: String, parameterType: ParameterType)
 
 object WhileProgram {
   type Label = Int
+
+  def findProcedure(name: String, program: WhileProgram): Procedure = findProcedure(name, program.declarations)
+
+  def findProcedure(name: String, declarations: List[Procedure]): Procedure = declarations.find(p => p.name == name).get
 
   def nonTrivialExpression(program: WhileProgram): Set[Exp] = blocks(program.stmt).flatMap(b => nonTrivialExpression(b))
 
@@ -38,19 +53,38 @@ object WhileProgram {
     case Skip(label) => Set(label)
     case Sequence(s1, s2) => labels(s1) union labels(s2)
     case IfThenElse(c, s1, s2) => Set(c.label) union labels(s1) union labels(s2)
+    case Call(_, _, lc, lr) => Set(lc, lr)
     case While(c, s) => Set(c.label) union labels(s)
   }
 
+//  def blocks(stmt: Stmt) : Set[Block] = stmt match {
+//    case Assignment(_, _, _) => Set(stmt)
+//    case Skip(_) => Set(stmt)
+//    case Sequence(s1, s2) => blocks(s1) union blocks(s2)
+//    case IfThenElse(c, s1, s2) => blocks(s1) union blocks(s2) union Set(c):Set[Block]
+//    case Call(_, _, _, _) => Set(stmt)
+//    case While(c, s) => blocks(s) union Set(c)
+//  }
+
   def blocks(stmt: Stmt) : Set[Block] = stmt match {
-    case Assignment(v, e, label) => Set(Assignment(v, e, label))
-    case Skip(label) => Set(Skip(label))
     case Sequence(s1, s2) => blocks(s1) union blocks(s2)
     case IfThenElse(c, s1, s2) => blocks(s1) union blocks(s2) union Set(c):Set[Block]
     case While(c, s) => blocks(s) union Set(c)
+    case aBlock : Block => Set(aBlock)
   }
 
   /* finds a specific block with a label within the statement stmt */
-  def block(label: Label, program: WhileProgram): Option[Block] = blocks(program.stmt).find(b => b.label == label)
+  def block(label: Label, program: WhileProgram): Option[Block] = blocks(program.stmt).find(b => b match {
+    case Skip(l) => l == label
+    case Assignment(_, _, l) => l == label
+    case Call(_, _, lc, lr) => ???     // TODO: Verificar se eh essa a regra no livro.
+                                       //   talvez seja o entry da procedure.
+    case Condition(_, l) => l == label
+  })
+
+  def initLabel(proc: Procedure) : Label = proc.ln
+
+  def finalLabel(proc: Procedure) : Set[Label] = Set(proc.lx)
 
   /*
    * Returns the first statement of a given statement.
@@ -62,6 +96,7 @@ object WhileProgram {
     case Skip(label) => label
     case Sequence(s1, _) => initLabel(s1)
     case IfThenElse(Condition(_, label), _, _)  => label
+    case Call(_, _, lc, _) => lc
     case While(Condition(_, label),_) => label
   }
 
@@ -75,6 +110,7 @@ object WhileProgram {
     case Skip(label) => Set(label)
     case Sequence(_, s2) => finalLabels(s2)
     case IfThenElse(_, s1, s2) => finalLabels(s1) union finalLabels(s2)
+    case Call(_, _, _, lr) => Set(lr)
     case While(Condition(_, label), _) => Set(label)
   }
 
@@ -148,6 +184,7 @@ case class Const(value: Int) extends AExp                // integer constants
 case class Add(left: AExp, right: AExp) extends AExp     // Add arithmetic operation
 case class Sub(left: AExp, right: AExp) extends AExp     // Sub arithmetic operation
 case class Mult(lef: AExp, right: AExp) extends AExp     // Mult arithmetic operation
+case class Div(lef: AExp, right: AExp) extends AExp      // Divide arithmetic expression
 
 /* Concrete implementations of BExp */
 case object True extends BExp
@@ -159,11 +196,7 @@ case class Or(Left: BExp, right: BExp) extends BExp
 case class Eq(left: AExp, right: AExp) extends BExp
 case class GT(left: AExp, right: AExp) extends BExp
 
-import WhileProgram.Label
-
-trait Block {
-  def label: Label
-}
+trait Block
 
 abstract class Stmt
 abstract class ElementaryStmt extends Stmt with Block
@@ -176,4 +209,5 @@ case class Assignment(name: String, exp: AExp, label: Label) extends ElementaryS
 case class Sequence(s1: Stmt, s2: Stmt) extends CompositeStmt   // s1;s2
 case class IfThenElse(condition: Condition, thenStmt: Stmt, elseStmt: Stmt) extends CompositeStmt
 case class While(condition: Condition, stmt: Stmt) extends CompositeStmt
+case class Call(name: String, args: List[AExp], lc: Label, lr: Label) extends ElementaryStmt
 case class Skip(label: Label) extends ElementaryStmt
