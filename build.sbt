@@ -8,3 +8,5 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0" % "test"
 libraryDependencies += "org.scalatest" %% "scalatest-featurespec" % "3.2.0" % "test"
 
 libraryDependencies += "org.scala-graph" %% "graph-core" % "1.13.2"
+
+libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "2.0.0"
