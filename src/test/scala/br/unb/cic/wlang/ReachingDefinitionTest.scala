@@ -12,7 +12,7 @@ class ReachingDefinitionTest extends  AnyFunSuite {
   val w1 = While(Condition(GT(Var("y"), Const(1)), 3), Sequence(d3, d4))
   val d5 = Assignment("y", Const(0), 6)
 
-  val p = WhileProgram(Sequence(d1, Sequence(d2, Sequence(w1, d5))))
+  val p = WhileProgram(List(), Sequence(d1, Sequence(d2, Sequence(w1, d5))))
 
   test("Test case for Reaching Definition") {
     val (in, out) = ReachingDefinition.execute(p)

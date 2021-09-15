@@ -15,7 +15,7 @@ class VeryBusyExpressionTest extends AnyFunSuite {
   val s5 = Assignment("x", Sub(Var("a"), Var("b")), 5)
   val s1 = IfThenElse(Condition(GT(Var("a"), Var("b")), 1), Sequence(s2, s3), Sequence(s4, s5))
 
-  val p = WhileProgram(Sequence(s1, s1))  // to define this program as a sequence of statements, s1 must come after s1
+  val p = WhileProgram(List(), Sequence(s1, s1))  // to define this program as a sequence of statements, s1 must come after s1
   // val p = WhileProgram(s1)
 
   test("Test case for Very Busy Expression") {

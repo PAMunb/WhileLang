@@ -16,7 +16,7 @@ class AvailableExpressionTest extends AnyFunSuite {
   val s3 =
     While(Condition(GT(Var("y"), Add(Var("a"), Var("b"))), 3), Sequence(s4, s5))
 
-  val p = WhileProgram(
+  val p = WhileProgram(List(),
     Sequence(s1, Sequence(s2, Sequence(s3, Sequence(s4, s5))))
   )
 

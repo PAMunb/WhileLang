@@ -22,7 +22,7 @@ class LiveVariableTest extends  AnyFunSuite {
     val s4 = IfThenElse(Condition(GT(Var("y"), Var("x")), 4), s5, s6)
     val s7 = Assignment("x", Var("z"), 7)
 
-    val p = WhileProgram(
+    val p = WhileProgram(List(),
         Sequence(s1, Sequence(s2, Sequence(s3, Sequence(s4, s7))))
     )
 
