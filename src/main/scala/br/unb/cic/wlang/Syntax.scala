@@ -194,7 +194,9 @@ case class Not(exp: BExp) extends BExp
 case class And(left: BExp, right: BExp) extends BExp
 case class Or(Left: BExp, right: BExp) extends BExp
 case class Eq(left: AExp, right: AExp) extends BExp
+case class NEq(left: AExp, right: AExp) extends BExp
 case class GT(left: AExp, right: AExp) extends BExp
+case class LT(left: AExp, right: AExp) extends BExp
 
 trait Block
 
