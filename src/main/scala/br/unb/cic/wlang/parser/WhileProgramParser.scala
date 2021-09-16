@@ -8,16 +8,27 @@ class WhileProgramParser extends JavaTokenParsers  {
 
   var cl = 0    // the current label
 
-  def wp: Parser[WhileProgram] = "begin" ~ statement ~ "end" ^^ { case _ ~ _ =>  WhileProgram(List(), Skip(1)) }
+  def reset() : Unit = cl = 0
+
+  def wp: Parser[WhileProgram] = "begin" ~ statement ~ "end" ^^ { case _ ~ s ~ _ =>  WhileProgram(List(), s) }
 
   /* building blocks for parsing statements */
-  def statement: Parser[Stmt] = skip
 
+  def statement: Parser[Stmt] = skip | assignment | repetition
   def skip: Parser[Stmt] = "skip" ^^ { case _ => {cl = cl + 1; Skip(cl) } }
-
   def assignment: Parser[Stmt] = ident ~ ":=" ~ aExp ^^ { case v ~ _ ~ exp => cl = cl + 1; Assignment(v, exp, cl)}
+  def sequence: Parser[Stmt] = statement ~ ";" ~ statement ^^ { case s1 ~ _ ~ s2 => Sequence(s1, s2) }
+  def repetition: Parser[Stmt] = "while" ~ condition ~ "begin" ~ statement ~ "end" ^^ {
+     case _ ~  c ~ _ ~ s ~ _ =>
+       cl = cl + 1; While(c, s)
+  }
+  def conditional: Parser[Stmt] = "if" ~ condition ~ "then" ~ statement ~ "else" ~ statement ~ "endif" ^^ {
+    case _ ~  c  ~ _ ~ thenStmt ~ _ ~ elseStmt ~ _ =>
+      cl = cl + 1; IfThenElse(c, thenStmt, elseStmt)
+  }
 
 
+  def condition: Parser[Condition] = "(" ~ bExp ~ ")" ^^ { case _ ~ c ~ _ => cl = cl + 1; Condition(c, cl) }
   /*
    * building blocks for parsing arithmetic expressions
    * this is the idiomatic way of dealing with

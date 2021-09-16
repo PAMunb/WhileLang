@@ -1,22 +1,19 @@
 package br.unb.cic.wlang.parser
 
 import br.unb.cic.wlang._
+import org.scalatest.BeforeAndAfter
 import org.scalatest.funsuite.AnyFunSuite
 
-class WhileProgramParserTest extends AnyFunSuite {
-  val p = new WhileProgramParser()
+class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
+  val p: WhileProgramParser = new WhileProgramParser()
+
+  before {
+    p.reset()
+  }
 
   test("Test for the skip parser") {
     p.parse(p.skip, "skip") match {
       case p.Success(Skip(1), _) => succeed
-      case p.Failure(msg,_) => println(s"FAILURE: $msg")
-      case p.Error(msg,_) => println(s"ERROR: $msg")
-    }
-  }
-
-  test("Test for the const parser") {
-    p.parse(p.const, "123") match {
-      case p.Success(Const(123), _) => succeed
       case p.Failure(msg,_) => println(s"FAILURE: $msg")
       case p.Error(msg,_) => println(s"ERROR: $msg")
     }
@@ -30,19 +27,56 @@ class WhileProgramParserTest extends AnyFunSuite {
     }
   }
 
+  test("Test for the sequence parser") {
+    p.parse(p.sequence, "x := x + 1; x := y") match {
+      case p.Success(c, _) => assert(c == Sequence(
+        Assignment("x", Add(Var("x"), Const(1)), 1),
+        Assignment("x", Var("y"), 2)))
+      case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
+    }
+  }
+
+  test("Test for the conditional parser") {
+    p.parse(p.conditional, "if(x < 10) then x := x + 1 else x := y endif") match {
+      case p.Success(c, _) => assert(c == IfThenElse(Condition(LT(Var("x"), Const(10)), 1),
+        Assignment("x", Add(Var("x"), Const(1)), 2),
+        Assignment("x", Var("y"), 3)))
+      case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
+    }
+  }
+
+  test("Test for the repetition parser") {
+    p.parse(p.repetition, "while(x < 10) begin x := x + 1 end") match {
+      case p.Success(c, _) => assert(c == While(Condition(LT(Var("x"), Const(10)), 1),
+        Assignment("x", Add(Var("x"), Const(1)), 2)))
+      case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
+    }
+  }
+
+  test("Test for the const parser") {
+    p.parse(p.const, "123") match {
+      case p.Success(Const(123), _) => succeed
+      case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
+    }
+  }
+
   test("Test for a simple arithmetic expression") {
     p.parse(p.aExp, "123 + 456 * 3") match {
       case p.Success(exp, _) => assert(exp == Add(Const(123), Mult(Const(456), Const(3))))
-      case p.Failure(msg,_) => println(s"FAILURE: $msg")
-      case p.Error(msg,_) => println(s"ERROR: $msg")
+      case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
     }
   }
 
   test("Test for arithmetic expressions with brackets") {
     p.parse(p.aExp, "(123 + 456) / 3") match {
       case p.Success(exp, _) => assert(exp == Div(Add(Const(123), Const(456)), Const(3)))
-      case p.Failure(msg,_) => println(s"FAILURE: $msg")
-      case p.Error(msg,_) => println(s"ERROR: $msg")
+      case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
     }
   }
 
