@@ -9,7 +9,7 @@ import WhileProgram._
  */
 case class WhileProgram(declarations: List[Procedure], stmt: Stmt)
 
-case class Procedure(name: String, formalArgs: List[FormalArgument], ln: Label, stmt: Stmt, lx: Label)
+case class Procedure(name: String, formalArgs: List[FormalArgument], ln: Label, stmt: Stmt, lx: Label)   //ln: entrada do corpo da proc; lx: saída do corpo da proc
 
 trait ParameterType
 
