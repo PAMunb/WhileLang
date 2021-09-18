@@ -28,7 +28,7 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
   }
 
   test("Test for the sequence parser") {
-    p.parse(p.sequence, "x := x + 1; x := y") match {
+    p.parse(p.sequence, "(x := x + 1; x := y)") match {
       case p.Success(c, _) => assert(c == Sequence(
         Assignment("x", Add(Var("x"), Const(1)), 1),
         Assignment("x", Var("y"), 2)))
@@ -92,6 +92,26 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
     p.parse(p.bExp, "x < 0 || (y > x + 1 && y < 100)") match {
       case p.Success(exp, _) => assert(exp == Or(LT(Var("x"), Const(0)), And(GT(Var("y"), Add(Var("x"), Const(1))), LT(Var("y"), Const(100)))))
       case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail
+    }
+  }
+
+  test("Test for procedure call") {
+    p.parse(p.statement, "fib(a - 1, 0,c)") match {
+      case p.Success(call, _) => succeed
+      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail
+    }
+  }
+
+  test("Test for the factorial module") {
+    val content = ResourceHandle.getContent("Factorial.wp")
+
+    assert(content != null)
+
+    p.parse(p.whileProgram, content) match {
+      case p.Success(program, _) => succeed
+      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
       case p.Error(msg,_) => println(s"ERROR: $msg"); fail
     }
   }
