@@ -11,11 +11,12 @@ object CFGBuilder {
   /**
    * Builds a control flow graph from a given While program.
    *
-   * @param program a While program
+   * @param wp a While program
    *
    * @return The control-flow graph of the While program
    */
-  def flow(program: WhileProgram): CFG = flow(program.declarations, program.stmt)
+  def flow(wp: WhileProgram): CFG =
+    wp.declarations.map(p => flow(wp.declarations, p)).foldLeft(Set[(Int, Int)]())(_ union _) union flow(wp.declarations, wp.stmt)
 
  /**
    * Builds the reversed control flow graph from a given While program.
@@ -24,7 +25,10 @@ object CFGBuilder {
    *
    * @return The control-flow graph of the While program
    */
-  def flowR(program: WhileProgram): CFG = flow(program.declarations, program.stmt).map({ case (a, b) => (b, a) }) // why do I need the 'case'?
+  def flowR(wp: WhileProgram): CFG = flow(wp).map({ case (a, b) => (b, a) }) // why do I need the 'case'?
+
+  def flow(ds: List[Procedure], p: Procedure): CFG =
+    Set[(Label, Label)]((p.ln, initLabel(p.stmt))) union flow(ds, p.stmt) union finalLabels(p.stmt).map(l => (l, p.lx))
 
   /*
    * The "core" of the algorithm for building

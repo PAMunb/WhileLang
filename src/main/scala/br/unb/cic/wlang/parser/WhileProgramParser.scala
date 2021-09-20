@@ -16,14 +16,15 @@ class WhileProgramParser extends JavaTokenParsers  {
 
   /* building blocks for parsing procedures */
 
-  def procedure: Parser[Procedure] =
+  def procedure: Parser[Procedure] = {
     "procedure" ~ ident ~ "(" ~ repsep(formalArgs, ",") ~ ")" ~ "is" ~ statement ~ "end" ~ ";" ^^ {
       case _ ~ name ~ _ ~ args ~ _ ~ _ ~ s ~ _ ~ _ =>
-        val le = cl+1
-        val lx = cl+2
+        val le = cl + 1
+        val lx = cl + 2
         cl = lx
         Procedure(name, args, le, s, lx);
     }
+  }
 
   def formalArgs: Parser[FormalArgument] = {
     "val" ~ ident ^^ { case _ ~ name => FormalArgument(name, ByValue) } |
@@ -48,13 +49,11 @@ class WhileProgramParser extends JavaTokenParsers  {
   def sequence: Parser[_ <: Stmt] = "(" ~ statement ~ ";" ~ statement ~ ")" ^^ { case _ ~ s1 ~ _ ~ s2 ~ _ => Sequence(s1, s2) }
 
   def repetition: Parser[Stmt] = "while" ~ condition ~ "begin" ~ statement ~ "end" ^^ {
-     case _ ~  c ~ _ ~ s ~ _ =>
-       cl = cl + 1; While(c, s)
+     case _ ~  c ~ _ ~ s ~ _ => While(c, s)
   }
 
   def conditional: Parser[Stmt] = "if" ~ condition ~ "then" ~ statement ~ "else" ~ statement ~ "endif" ^^ {
-    case _ ~  c  ~ _ ~ thenStmt ~ _ ~ elseStmt ~ _ =>
-      cl = cl + 1; IfThenElse(c, thenStmt, elseStmt)
+    case _ ~  c  ~ _ ~ thenStmt ~ _ ~ elseStmt ~ _ => IfThenElse(c, thenStmt, elseStmt)
   }
 
   def condition: Parser[Condition] = "(" ~ bExp ~ ")" ^^ { case _ ~ c ~ _ => cl = cl + 1; Condition(c, cl) }

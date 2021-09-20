@@ -46,7 +46,10 @@ object WhileProgram {
     case Eq(left, right) =>  nonTrivialExpression(left) union nonTrivialExpression(right)
   }
 
-  def labels(program: WhileProgram): Set[Label] = labels(program.stmt)
+  def labels(wp: WhileProgram): Set[Label] =
+    wp.declarations.map(p => labels(p)).foldLeft(Set[Label]())(_ union _) union labels(wp.stmt)
+
+  def labels(p: Procedure): Set[Label] = Set[Label](p.ln, p.lx) union labels(p.stmt)
 
   private def labels(stmt: Stmt): Set[Label] = stmt match {
     case Assignment(_, _, label) => Set(label)
@@ -66,6 +69,11 @@ object WhileProgram {
 //    case While(c, s) => blocks(s) union Set(c)
 //  }
 
+  def blocks(wp: WhileProgram): Set[Block] =
+    wp.declarations.map(p => blocks(p)).foldLeft(Set[Block]())(_ union _ ) union blocks(wp.stmt)
+
+  def blocks(p: Procedure): Set[Block] = Set[Block](Entry(p.ln), Entry(p.lx)) union blocks(p.stmt)
+
   def blocks(stmt: Stmt) : Set[Block] = stmt match {
     case Sequence(s1, s2) => blocks(s1) union blocks(s2)
     case IfThenElse(c, s1, s2) => blocks(s1) union blocks(s2) union Set(c):Set[Block]
@@ -82,9 +90,9 @@ object WhileProgram {
     case Condition(_, l) => l == label
   })
 
-  def initLabel(proc: Procedure) : Label = proc.ln
+  def initLabel(wp: WhileProgram): Label = initLabel(wp.stmt)
 
-  def finalLabel(proc: Procedure) : Set[Label] = Set(proc.lx)
+  def initLabel(proc: Procedure) : Label = proc.ln
 
   /*
    * Returns the first statement of a given statement.
@@ -99,6 +107,10 @@ object WhileProgram {
     case Call(_, _, lc, _) => lc
     case While(Condition(_, label),_) => label
   }
+
+  def finalLabels(wp: WhileProgram): Set[Label] = finalLabels(wp.stmt)
+
+  def finalLabels(proc: Procedure) : Set[Label] = Set(proc.lx)
 
   /*
    * Returns the last statement of a given statement.
@@ -199,6 +211,9 @@ case class GT(left: AExp, right: AExp) extends BExp
 case class LT(left: AExp, right: AExp) extends BExp
 
 trait Block
+
+case class Entry(label: Label) extends Block
+case class Exit(label: Label) extends Block
 
 abstract class Stmt
 abstract class ElementaryStmt extends Stmt with Block

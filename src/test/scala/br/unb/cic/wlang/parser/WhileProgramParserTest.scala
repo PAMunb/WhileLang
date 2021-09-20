@@ -105,7 +105,7 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
   }
 
   test("Test for the factorial module") {
-    val content = ResourceHandle.getContent("Factorial.wp")
+    val content = ResourceHandle.getContent("Fibonacci.wp")
 
     assert(content != null)
 
