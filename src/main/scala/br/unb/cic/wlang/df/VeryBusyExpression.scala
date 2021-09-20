@@ -1,10 +1,12 @@
-package br.unb.cic.wlang
+package br.unb.cic.wlang.df
+
+import br.unb.cic.wlang.CFGBuilder.flowR
+import br.unb.cic.wlang.WhileProgram._
+import br.unb.cic.wlang._
 
 import scala.collection.mutable
-import CFGBuilder.{flow, flowR}
-import WhileProgram.{Label, labels, block, initLabel, finalLabels, fv, nonTrivialExpression, expHasVariable}
 
-/* 
+/*
  Implementation of the Available Expression algorithm.
 */
 object VeryBusyExpression {
@@ -12,6 +14,7 @@ object VeryBusyExpression {
   type DS = mutable.HashMap[Int, Abstraction] //(label, Set[Exp])
 
   val empty: Abstraction = Set.empty
+
   def execute(program: WhileProgram): (DS, DS) = {
     var fixed = false
 
@@ -28,8 +31,8 @@ object VeryBusyExpression {
     // to first compute entry[l] from exit[l]. after
     // that, we recompute exit[l] from entry[l].
     for (label <- labels(program)) {
-    //   exit(label) = 
-      entry(label) =   
+      //   exit(label) =
+      entry(label) =
         bottom //for VB the meet operator is intersection so we initialize exit(label) with all non-trivial expressions of the program as largest solution
     }
 
@@ -66,14 +69,14 @@ object VeryBusyExpression {
   /* kill definition according to Table 2.3 of the PPA book */
   def kill(block: Block, program: WhileProgram): Abstraction = block match {
     case Assignment(x, exp, label) => nonTrivialExpression(program).filter(exp => expHasVariable(x, exp)) //killVB({X := a}ℓ) = {a' ∈ AExp*, | x ∈ FV(a')}
-    case Skip(_)                   => Set.empty
-    case Condition(_, _)           => Set.empty
+    case Skip(_) => Set.empty
+    case Condition(_, _) => Set.empty
   }
 
   /* gen definition according to Table 2.3 of the PPA book */
   def gen(block: Block): Abstraction = block match {
     case Assignment(x, a, label) => nonTrivialExpression(a) //genVB({X := a}ℓ) = AExp(a)
-    case Skip(_)                   => Set.empty
-    case Condition(b, _)           => nonTrivialExpression(b) //genVB({b}ℓ) = AExp(b)
+    case Skip(_) => Set.empty
+    case Condition(b, _) => nonTrivialExpression(b) //genVB({b}ℓ) = AExp(b)
   }
 }

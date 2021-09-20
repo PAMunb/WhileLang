@@ -1,4 +1,5 @@
 package br.unb.cic.wlang
+import br.unb.cic.wlang.df.AvailableExpression
 import org.scalatest.funsuite.AnyFunSuite
 
 class AvailableExpressionTest extends AnyFunSuite {

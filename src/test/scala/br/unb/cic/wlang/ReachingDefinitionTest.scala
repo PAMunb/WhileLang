@@ -1,6 +1,7 @@
 package br.unb.cic.wlang
 
-import br.unb.cic.wlang.ReachingDefinition.undef
+import br.unb.cic.wlang.df.ReachingDefinition
+import br.unb.cic.wlang.df.ReachingDefinition.undef
 import org.scalatest.funsuite.AnyFunSuite
 
 class ReachingDefinitionTest extends  AnyFunSuite {

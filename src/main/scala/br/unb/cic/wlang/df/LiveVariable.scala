@@ -1,8 +1,10 @@
-package br.unb.cic.wlang
+package br.unb.cic.wlang.df
+
+import br.unb.cic.wlang.CFGBuilder.flowR
+import br.unb.cic.wlang.WhileProgram.{block, finalLabels, fv, labels}
+import br.unb.cic.wlang._
 
 import scala.collection.mutable
-import CFGBuilder.{flow, flowR}
-import WhileProgram.{Label, labels, block, finalLabels, fv, variables, expHasVariable}
 
 /*
  Implementation of the Live Variable algorithm.
@@ -12,7 +14,7 @@ object LiveVariable {
   type DS = mutable.HashMap[Int, Abstraction]
 
   val bottom: Abstraction = Set.empty
-//   val variables: Abstraction = Set.empty
+  //   val variables: Abstraction = Set.empty
 
   def execute(program: WhileProgram): (DS, DS) = {
     var fixed = false
@@ -28,14 +30,14 @@ object LiveVariable {
     // to first compute entry[l] from exit[l]. after
     // that, we recompute exit[l] from entry[l].
     for (label <- labels(program)) {
-      entry(label) = bottom  //for LV the meet operator is union so we initialize entry(label) with all empty set as smallest solution
+      entry(label) = bottom //for LV the meet operator is union so we initialize entry(label) with all empty set as smallest solution
     }
 
     do {
       val entryOld = entry.clone()
       val exitOld = exit.clone()
 
-      for(label <- labels(program)) {
+      for (label <- labels(program)) {
         exit(label) = {
           if (finalLabels(program.stmt).contains(label))
             Set.empty
@@ -55,26 +57,24 @@ object LiveVariable {
         }
       }
       fixed = (entryOld, exitOld) == (entry, exit)
-    } while(! fixed)
-    
+    } while (!fixed)
+
     (entry, exit)
   }
-  
+
   /* kill definition according to Table 2.4 of the PPA book */
   def kill(block: Block, program: WhileProgram): Abstraction = block match {
     case Assignment(x, exp, label) => Set(x) //killLV({X := a}ℓ) = {x}
-    case Skip(_)                   => Set.empty
-    case Condition(_, _)           => Set.empty
+    case Skip(_) => Set.empty
+    case Condition(_, _) => Set.empty
   }
 
   /* gen definition according to Table 2.4 of the PPA book */
   def gen(block: Block): Abstraction = block match {
     case Assignment(x, a, label) => fv(a) //genLV({X := a}ℓ) = FV(a)
-    case Skip(_)                   => Set.empty
-    case Condition(b, _)           => fv(b) //genLV({b}ℓ) = FV(b)
+    case Skip(_) => Set.empty
+    case Condition(b, _) => fv(b) //genLV({b}ℓ) = FV(b)
   }
 
-
-  
 
 }

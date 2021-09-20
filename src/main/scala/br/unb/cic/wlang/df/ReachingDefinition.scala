@@ -1,8 +1,10 @@
-package br.unb.cic.wlang
+package br.unb.cic.wlang.df
+
+import br.unb.cic.wlang.CFGBuilder.flow
+import br.unb.cic.wlang.WhileProgram._
+import br.unb.cic.wlang._
 
 import scala.collection.mutable
-import CFGBuilder.flow
-import WhileProgram.{Label, labels, block, initLabel, fv, assignments}
 
 /*
  Implementation of the Reaching Definition algorithm.
@@ -12,9 +14,9 @@ object ReachingDefinition {
   type Abstraction = Set[(String, Label)] //for RD the Abstraction is (String,Label) such that String is the variable of interest
   type DS = mutable.HashMap[Int, Abstraction]
 
-  val bottom: Abstraction = Set.empty   
+  val bottom: Abstraction = Set.empty
 
-  val undef = -1   // this is the equivalent to the undef label in the book (?)
+  val undef = -1 // this is the equivalent to the undef label in the book (?)
 
   def execute(program: WhileProgram): (DS, DS) = {
     var fixed = false
@@ -29,15 +31,15 @@ object ReachingDefinition {
     // we need to initialize exit..., since we have
     // to first compute entry[l] from exit[l]. after
     // that, we recompute exit[l] from entry[l].
-    for(label <- labels(program)) {
-      exit(label) = bottom  //for RD the meet operator is union so we initialize exit(label) with all empty set as smallest solution
+    for (label <- labels(program)) {
+      exit(label) = bottom //for RD the meet operator is union so we initialize exit(label) with all empty set as smallest solution
     }
 
     do {
       val entryOld = entry.clone()
       val exitOld = exit.clone()
 
-      for(label <- labels(program)) {
+      for (label <- labels(program)) {
         entry(label) =
           if (label == initLabel(program.stmt))
             fv(program.stmt).map(v => (v, undef)) // { (x, ?) | x ∈ FV(S) }  S=program.stmt as of Table 2.2 on page 41 of the PPA book
@@ -47,17 +49,17 @@ object ReachingDefinition {
             // we could have implemented this using foldLeft, though I hope this
             // solution here is easier to understand.
             var res = bottom
-            for((from, to) <- flow(program) if to == label) {
+            for ((from, to) <- flow(program) if to == label) {
               res = exit(from) union res
             }
             res
           }
-        val b = block(label, program)  // block with a given label *label*
+        val b = block(label, program) // block with a given label *label*
         exit(label) = (entry(label) diff kill(b.get, program)) union gen(b.get)
       }
       fixed = (entryOld, exitOld) == (entry, exit)
     }
-    while(! fixed)
+    while (!fixed)
     (entry, exit)
   }
 
@@ -65,7 +67,7 @@ object ReachingDefinition {
   // def kill(block: Block, program: WhileProgram): Set[(String, Label)] = block match {
   def kill(block: Block, program: WhileProgram): Abstraction = block match {
     case Assignment(x, _, label) =>
-      Set((x, undef)) union assignments(program).filter( { case (v, l) => v == x && l != label } )
+      Set((x, undef)) union assignments(program).filter({ case (v, l) => v == x && l != label })
     case Skip(_) => Set.empty
     case Condition(_, _) => Set.empty
   }
@@ -73,7 +75,7 @@ object ReachingDefinition {
   /* gen definition according to Table 2.2 of the PPA book */
   // def gen(block: Block): Set[(String, Label)] = block match {
   def gen(block: Block): Abstraction = block match {
-    case Assignment(x, _, label) => Set((x,label))
+    case Assignment(x, _, label) => Set((x, label))
     case Skip(_) => Set.empty
     case Condition(_, _) => Set.empty
   }
