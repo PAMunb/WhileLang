@@ -1,6 +1,6 @@
 package br.unb.cic.wlang.df
 
-import br.unb.cic.wlang.CFGBuilder.flow
+import br.unb.cic.wlang.cfg.CFGBuilder.flow
 import br.unb.cic.wlang.WhileProgram._
 import br.unb.cic.wlang._
 

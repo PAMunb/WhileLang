@@ -30,8 +30,8 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
   test("Test for the sequence parser") {
     p.parse(p.sequence, "(x := x + 1; x := y)") match {
       case p.Success(c, _) => assert(c == Sequence(
-        Assignment("x", Add(Var("x"), Const(1)), 1),
-        Assignment("x", Var("y"), 2)))
+        Assignment("x", Add(Variable("x"), Const(1)), 1),
+        Assignment("x", Variable("y"), 2)))
       case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
       case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
     }
@@ -39,18 +39,18 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
 
   test("Test for the conditional parser") {
     p.parse(p.conditional, "if(x < 10) then x := x + 1 else x := y endif") match {
-      case p.Success(c, _) => assert(c == IfThenElse(Condition(LT(Var("x"), Const(10)), 1),
-        Assignment("x", Add(Var("x"), Const(1)), 2),
-        Assignment("x", Var("y"), 3)))
+      case p.Success(c, _) => assert(c == IfThenElse(Condition(LT(Variable("x"), Const(10)), 1),
+        Assignment("x", Add(Variable("x"), Const(1)), 2),
+        Assignment("x", Variable("y"), 3)))
       case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
       case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
     }
   }
 
   test("Test for the repetition parser") {
-    p.parse(p.repetition, "while(x < 10) begin x := x + 1 end") match {
-      case p.Success(c, _) => assert(c == While(Condition(LT(Var("x"), Const(10)), 1),
-        Assignment("x", Add(Var("x"), Const(1)), 2)))
+    p.parse(p.repetition, "while(x < 10) do x := x + 1 end") match {
+      case p.Success(c, _) => assert(c == While(Condition(LT(Variable("x"), Const(10)), 1),
+        Assignment("x", Add(Variable("x"), Const(1)), 2)))
       case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
       case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
     }
@@ -82,7 +82,7 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
 
   test("Test for a simple LT expression") {
     p.parse(p.rel, "x < 0") match {
-      case p.Success(exp, _) => assert(exp == LT(Var("x"), Const(0)))
+      case p.Success(exp, _) => assert(exp == LT(Variable("x"), Const(0)))
       case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail()
       case p.Error(msg,_) => println(s"ERROR: $msg"); fail()
     }
@@ -90,7 +90,7 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
 
   test("Test for non trivial boolean expressions") {
     p.parse(p.bExp, "x < 0 || (y > x + 1 && y < 100)") match {
-      case p.Success(exp, _) => assert(exp == Or(LT(Var("x"), Const(0)), And(GT(Var("y"), Add(Var("x"), Const(1))), LT(Var("y"), Const(100)))))
+      case p.Success(exp, _) => assert(exp == Or(LT(Variable("x"), Const(0)), And(GT(Variable("y"), Add(Variable("x"), Const(1))), LT(Variable("y"), Const(100)))))
       case p.Failure(msg,_) => println(s"FAILURE: $msg"); fail
       case p.Error(msg,_) => println(s"ERROR: $msg"); fail
     }

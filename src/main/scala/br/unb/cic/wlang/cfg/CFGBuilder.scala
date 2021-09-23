@@ -1,6 +1,8 @@
-package br.unb.cic.wlang
+package br.unb.cic.wlang.cfg
 
-import WhileProgram._
+import br.unb.cic.wlang.WhileProgram.{Label, finalLabels, findProcedure, initLabel}
+import br.unb.cic.wlang._
+
 /**
  * An Scala object responsible for building control
  * flow graphs from a While program.
@@ -12,17 +14,15 @@ object CFGBuilder {
    * Builds a control flow graph from a given While program.
    *
    * @param wp a While program
-   *
    * @return The control-flow graph of the While program
    */
   def flow(wp: WhileProgram): CFG =
     wp.declarations.map(p => flow(wp.declarations, p)).foldLeft(Set[(Int, Int)]())(_ union _) union flow(wp.declarations, wp.stmt)
 
- /**
+  /**
    * Builds the reversed control flow graph from a given While program.
    *
    * @param program a While program
-   *
    * @return The control-flow graph of the While program
    */
   def flowR(wp: WhileProgram): CFG = flow(wp).map({ case (a, b) => (b, a) }) // why do I need the 'case'?
@@ -37,7 +37,7 @@ object CFGBuilder {
    *
    * (for { from <- finalStmt(s1) } yield (from, initStatement(s2)))
    */
-   private def flow(ds: List[Procedure], stmt: Stmt): CFG = {
+  private def flow(ds: List[Procedure], stmt: Stmt): CFG = {
     stmt match {
       case Assignment(_, _, _) => Set.empty
       case Skip(_) => Set.empty
@@ -48,7 +48,7 @@ object CFGBuilder {
         flow(ds, s) union Set((label, initLabel(s))) union finalLabels(s).map(from => (from, label))
       case Call(name, _, lc, lr) =>
         findProcedure(name, ds) match {
-          case Procedure(_, _, ln, _, lx) =>  Set((lc, ln), (lx, lr))
+          case Procedure(_, _, ln, _, lx) => Set((lc, ln), (lx, lr))
         }
     }
   }

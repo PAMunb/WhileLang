@@ -34,7 +34,7 @@ object WhileProgram {
   }
 
   def nonTrivialExpression(exp: Exp): Set[Exp] = exp match {
-    case Var(_) => Set.empty
+    case Variable(_) => Set.empty
     case Const(_) => Set.empty
     case Add(left, right) => Set(exp) union nonTrivialExpression(left) union nonTrivialExpression(right)
     case Sub(left, right) => Set(exp) union nonTrivialExpression(left) union nonTrivialExpression(right)
@@ -136,7 +136,7 @@ object WhileProgram {
   }
 
   def fv(exp: AExp): Set[String] = exp match {
-    case Var(name) => Set(name)
+    case Variable(name) => Set(name)
     case Const(_) => Set() // == Set.empty
     case Add(l, r) => fv(l) union fv(r)
     case Sub(l, r) => fv(l) union fv(r)
@@ -149,8 +149,8 @@ object WhileProgram {
     case Or(vl, vr) => fv(vl) union fv(vr)
     case Eq(vl, vr) => fv(vl) union fv(vr)
     case GT(vl, vr) => fv(vl) union fv(vr)
-  } 
- 
+  }
+
   def assignments(program: WhileProgram): Set[(String, Label)] = assignments(program.stmt)
 
   private def assignments(stmt: Stmt): Set[(String, Label)] = stmt match {
@@ -172,7 +172,7 @@ object WhileProgram {
   }
 
   def expHasVariable(x: String, exp: Exp): Boolean = exp match {
-    case Var(v) => v == x
+    case Variable(v) => v == x
     case Const(_) => false
     case Add(left, right) => expHasVariable(x, left) || expHasVariable(x, right)
     case Sub(left, right) => expHasVariable(x, left) || expHasVariable(x, right)
@@ -191,7 +191,7 @@ abstract class AExp extends Exp
 abstract class BExp extends Exp
 
 /* Concrete implementations of AExp */
-case class Var(name: String) extends AExp                // variables
+case class Variable(name: String) extends AExp                // variables
 case class Const(value: Int) extends AExp                // integer constants
 case class Add(left: AExp, right: AExp) extends AExp     // Add arithmetic operation
 case class Sub(left: AExp, right: AExp) extends AExp     // Sub arithmetic operation
@@ -228,3 +228,4 @@ case class IfThenElse(condition: Condition, thenStmt: Stmt, elseStmt: Stmt) exte
 case class While(condition: Condition, stmt: Stmt) extends CompositeStmt
 case class Call(name: String, args: List[AExp], lc: Label, lr: Label) extends ElementaryStmt
 case class Skip(label: Label) extends ElementaryStmt
+

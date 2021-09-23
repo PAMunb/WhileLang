@@ -48,7 +48,7 @@ class WhileProgramParser extends JavaTokenParsers  {
 
   def sequence: Parser[_ <: Stmt] = "(" ~ statement ~ ";" ~ statement ~ ")" ^^ { case _ ~ s1 ~ _ ~ s2 ~ _ => Sequence(s1, s2) }
 
-  def repetition: Parser[Stmt] = "while" ~ condition ~ "begin" ~ statement ~ "end" ^^ {
+  def repetition: Parser[Stmt] = "while" ~ condition ~ "do" ~ statement ~ "end" ^^ {
      case _ ~  c ~ _ ~ s ~ _ => While(c, s)
   }
 
@@ -69,22 +69,22 @@ class WhileProgramParser extends JavaTokenParsers  {
    */
 
   def aExp  : Parser[AExp] = term ~ rep(plus | minus) ^^ {case a~b => (a /: b)((acc,f) => f(acc))}
-  def plus  : Parser[AExp => AExp] = "+" ~ term ^^ { case "+" ~ b => Add(_, b) }
-  def minus : Parser[AExp => AExp] = "-" ~ term ^^ { case "-" ~ b => Sub(_, b) }
+  def plus  : Parser[AExp => AExp] = "+" ~ term ^^ { case _ ~ b => Add(_, b) }
+  def minus : Parser[AExp => AExp] = "-" ~ term ^^ { case _ ~ b => Sub(_, b) }
   def term  : Parser[AExp] = factor ~ rep(times | divide) ^^ { case a~b => (a /: b)((acc,f) => f(acc))}
-  def times : Parser[AExp => AExp] =  "*" ~ factor ^^ { case "*" ~ b => Mult(_, b) }
-  def divide : Parser[AExp => AExp] =  "/" ~ factor ^^ { case "/" ~ b => Div(_, b) }
+  def times : Parser[AExp => AExp] =  "*" ~ factor ^^ { case _ ~ b => Mult(_, b) }
+  def divide : Parser[AExp => AExp] =  "/" ~ factor ^^ { case _ ~ b => Div(_, b) }
   def factor: Parser[AExp] = variable | const | "(" ~> aExp <~ ")"
-  def variable: Parser[AExp] = ident ^^ { case name => Var(name) }
+  def variable: Parser[AExp] = ident ^^ { case name => Variable(name) }
   def const : Parser[AExp] = decimalNumber ^^ { case d => Const(d.toInt) }
 
   /*
    * building blocks for parsing boolean expressions.
    */
   def bExp: Parser[BExp] = bTerm ~ rep(or) ^^ { case a~b => (a /: b)((acc,f) => f(acc)) }
-  def or: Parser[BExp => BExp] = "||" ~ bTerm ^^ { case "||" ~ b => Or(_, b)}
+  def or: Parser[BExp => BExp] = "||" ~ bTerm ^^ { case _ ~ b => Or(_, b)}
   def bTerm: Parser[BExp] = (bFactor | rel) ~ rep(and) ^^ { case a~b => (a /: b)((acc,f) => f(acc)) }
-  def and: Parser[BExp => BExp] = "&&" ~ (bFactor | rel) ^^ { case "&&" ~ b => And(_, b)}
+  def and: Parser[BExp => BExp] = "&&" ~ (bFactor | rel) ^^ { case _ ~ b => And(_, b)}
   def rel: Parser[BExp] = eq | neq | gt | lt
   def eq: Parser[BExp] = aExp ~ "==" ~ aExp  ^^ { case left ~ _ ~ right => Eq(left, right) }
   def neq: Parser[BExp] = aExp ~ "!=" ~ aExp ^^ { case left ~ _ ~ right => NEq(left, right) }

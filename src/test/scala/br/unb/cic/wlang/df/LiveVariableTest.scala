@@ -1,7 +1,6 @@
-package br.unb.cic.wlang
+package br.unb.cic.wlang.df
 
-import br.unb.cic.wlang.df.LiveVariable
-import br.unb.cic.wlang.df.ReachingDefinition.undef
+import br.unb.cic.wlang._
 import org.scalatest.funsuite.AnyFunSuite
 
 class LiveVariableTest extends  AnyFunSuite {
@@ -18,10 +17,10 @@ class LiveVariableTest extends  AnyFunSuite {
     val s1 = Assignment("x", Const(2), 1)
     val s2 = Assignment("y", Const(4), 2)
     val s3 = Assignment("x", Const(1), 3)
-    val s5 = Assignment("z", Var("y"), 5)
-    val s6 = Assignment("z", Mult(Var("y"), Var("y")), 6)
-    val s4 = IfThenElse(Condition(GT(Var("y"), Var("x")), 4), s5, s6)
-    val s7 = Assignment("x", Var("z"), 7)
+    val s5 = Assignment("z", Variable("y"), 5)
+    val s6 = Assignment("z", Mult(Variable("y"), Variable("y")), 6)
+    val s4 = IfThenElse(Condition(GT(Variable("y"), Variable("x")), 4), s5, s6)
+    val s7 = Assignment("x", Variable("z"), 7)
 
     val p = WhileProgram(List(),
         Sequence(s1, Sequence(s2, Sequence(s3, Sequence(s4, s7))))
