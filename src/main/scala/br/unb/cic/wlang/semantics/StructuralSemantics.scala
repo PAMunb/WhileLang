@@ -3,6 +3,8 @@ package br.unb.cic.wlang.semantics
 import br.unb.cic.wlang.{AExp, Add, And, Assignment, BExp, ByResult, ByValue, Call, Const, Div, Eq, False, FormalArgument, GT, IfThenElse, LT, Mult, NEq, Not, Or, Procedure, Sequence, Skip, Stmt, Sub, True, Variable, While, WhileProgram}
 import br.unb.cic.wlang.semantics.Environment._
 
+import scala.collection.convert.ImplicitConversions.`collection asJava`
+
 class StructuralSemantics {
 
   val undef: Z = 0
@@ -131,7 +133,6 @@ class StructuralSemantics {
     case Bind(nEnv, s, args) => interpret(s, store)(nEnv) match {
       case SC(newStmt, newEnv, newStore) => interpret(Bind(nEnv, newStmt, args), newStore)(newEnv)
       case TC(newEnv, newStore)          =>
-        println(newStore)
         var finalEnv: Env = e
         var finalStore: Store = store
         args.foreach({case (f, a) =>
@@ -161,6 +162,8 @@ class StructuralSemantics {
 
   case class Bind(newEnv: Env, stmt: Stmt, resParameterBindings: List[(Var, Var)]) extends Stmt
 
+  // a garbage collector ...
+  def gc(env: Env, store: Store): (Env, Store) = (env, store.filter( { case (loc, _) => env.values.contains(loc)}))
 
 //  def allocateVariables(stmt: Stmt, env: Env): Env = stmt match {
 //    case Skip(_) => env
