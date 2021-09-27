@@ -2,11 +2,11 @@ begin
 
   procedure fib(val z, val u, res v) is
     if(z < 3)
-      then v := v + 1
-      else (fib(z-1, u, v); fib(z-1, u, v))
+      then v := u + 1
+      else (fib(z-1, u, v); fib(z-2, v, v))
     endif
   end;
 
-  fib(10, 0, y)
+  fib(9, 0, y)
 
 end

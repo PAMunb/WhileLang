@@ -57,7 +57,9 @@ class StructuralSemantics {
 
   def run(p: WhileProgram): AbsConfiguration = {
     this.wp = p
-    interpret(wp.stmt, new Store())(new Env())
+    //val env = allocateVariables(wp.stmt, new Env())
+    val env = new Env()
+    interpret(wp.stmt, new Store())(env)
   }
 
   // returns a new environment with a new variable/
@@ -80,7 +82,7 @@ class StructuralSemantics {
     case Skip(_) => TC(e, store)                                 // just returns the current state
 
     case Assignment(x, a, _) =>
-      if(e.contains(x)) TC(e, store + (e(x) -> aEval(a)(e)(store)))  // updates the state, assigning x -> A[x]s
+      if(e.contains(x))  TC(e, store + (e(x) -> aEval(a)(e)(store))) // updates the state, assigning x -> A[x]s
       else {
         val env = createLocationForNewVariable(e, x)
         TC(env, store + (env(x) -> aEval(a)(env)(store)))
@@ -105,11 +107,16 @@ class StructuralSemantics {
 
       val newLocations: Map[Var, Loc] = p.formalArgs.map(x => x.name -> allocation()).toMap   // a map from var to location
 
-      val newEnvironment: Env = e ++ newLocations                      // the new environment
+      val newEnvironment: Env = e ++ newLocations //allocateVariables(p.stmt, e ++ newLocations)
 
       val resParameters: List[(Var, Var)] =
         p.formalArgs.zip(args).filter({
-          case (FormalArgument(_, ByResult), Variable(_)) => true   // we are only interested in ByResult parameters
+          case (FormalArgument(_, ByResult), Variable(v)) => { // we are only interested in ByResult parameters. and we have to add "v"in the current environment
+            if (!e.contains(v)) {
+              e + (v -> allocation())
+            }
+            true
+          }
           case _ => false
         }
         ).map({case (f: FormalArgument, v: Variable) => (f.name, v.name)})
@@ -123,7 +130,16 @@ class StructuralSemantics {
 
     case Bind(nEnv, s, args) => interpret(s, store)(nEnv) match {
       case SC(newStmt, newEnv, newStore) => interpret(Bind(nEnv, newStmt, args), newStore)(newEnv)
-      case TC(newEnv, newStore)          => TC(newEnv, newStore ++ args.map({case (f, a) => newEnv(a) -> newStore(nEnv(f))}))
+      case TC(newEnv, newStore)          =>
+        println(newStore)
+        var finalEnv: Env = e
+        var finalStore: Store = store
+        args.foreach({case (f, a) =>
+          if(! finalEnv.contains(a)) finalEnv = finalEnv + (a -> allocation())
+
+          finalStore = finalStore + (finalEnv(a) -> newStore(newEnv(f)))
+        })
+        TC(finalEnv, finalStore)
     }
   }
 
@@ -144,4 +160,23 @@ class StructuralSemantics {
   // parameter by result in a procedure declaration.
 
   case class Bind(newEnv: Env, stmt: Stmt, resParameterBindings: List[(Var, Var)]) extends Stmt
+
+
+//  def allocateVariables(stmt: Stmt, env: Env): Env = stmt match {
+//    case Skip(_) => env
+//    case Assignment(v, _, _) => if(env.contains(v)) env else env + (v -> allocation())
+//    case IfThenElse(_, s1, s2) => allocateVariables(s1, env) ++ allocateVariables(s2, env)
+//    case While(_, s) =>   allocateVariables(s, env)
+//    case Sequence(s1, s2) => allocateVariables(s1, env) ++ allocateVariables(s2, env)
+//    case Call(_, args, _, _) => {
+//      var env1 : Env = env
+//      args.foreach(a => a match {
+//        case Variable(v) => env1 = if(env1.contains(v)) env1 else env1 + (v -> allocation())
+//        case _ => // do nothing
+//      })
+//      env1
+//    }
+//
+//  }
+
 }
