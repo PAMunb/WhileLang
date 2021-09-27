@@ -24,9 +24,10 @@ class StructuralSemanticsTest extends AnyFunSuite {
 
     val interpreter = new StructuralSemantics()
 
-    val res = interpreter.run(wp)
-
-    println(res)
+    interpreter.run(wp) match {
+      case TC(e, s) => assert(s(e("x")) == 5)
+      case _ => fail()
+    }
   }
 
   test("Test for the factorial program") {
@@ -70,7 +71,7 @@ class StructuralSemanticsTest extends AnyFunSuite {
     val interpreter = new StructuralSemantics()
 
      interpreter.run(wp) match {
-      case TC(e, s) => assert(s(e("y")) == 34)  
+      case TC(e, s) => assert(s(e("y")) == 34)
       case _ => fail()
     }
 
