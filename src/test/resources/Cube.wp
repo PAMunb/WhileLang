@@ -1,0 +1,9 @@
+begin
+
+  procedure square(val a, res b) is
+    ((b := a * a); (b := b * a);)
+  end;
+
+  sum(3, z)
+
+end

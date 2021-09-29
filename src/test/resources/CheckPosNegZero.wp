@@ -1,0 +1,13 @@
+begin
+
+ x := 20
+ 
+ if(x < 0) 
+   then z := 1
+   else (if(x = 0)
+        then z := 2
+        else z := 3
+        endif)
+   endif
+  
+end
