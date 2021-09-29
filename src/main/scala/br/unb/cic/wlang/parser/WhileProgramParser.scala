@@ -33,7 +33,11 @@ class WhileProgramParser extends JavaTokenParsers  {
 
   /* building blocks for parsing statements */
 
-  def statement: Parser[Stmt] = skip | call | assignment | repetition | conditional | sequence
+  def statement: Parser[Stmt] = sequenceStatement | {cl = cl - 1; simpleStatement }
+
+  def simpleStatement: Parser[Stmt] = skip | call | assignment | repetition | conditional
+
+  def sequenceStatement: Parser[Stmt] = simpleStatement ~ ";" ~ statement ^^ { case s1 ~ _ ~ s2 => Sequence(s1, s2)}
 
   def call: Parser[Stmt] = ident ~ "(" ~ repsep(aExp, ",") ~ ")" ^^ { case name ~ _ ~ args ~ _ =>
     val lc = cl + 1
@@ -45,8 +49,6 @@ class WhileProgramParser extends JavaTokenParsers  {
   def skip: Parser[Stmt] = "skip" ^^ { case _ => {cl = cl + 1; Skip(cl) } }
 
   def assignment: Parser[Stmt] = ident ~ ":=" ~ aExp ^^ { case v ~ _ ~ exp => cl = cl + 1; Assignment(v, exp, cl)}
-
-  def sequence: Parser[_ <: Stmt] = "(" ~ statement ~ ";" ~ statement ~ ")" ^^ { case _ ~ s1 ~ _ ~ s2 ~ _ => Sequence(s1, s2) }
 
   def repetition: Parser[Stmt] = "while" ~ condition ~ "do" ~ statement ~ "end" ^^ {
      case _ ~  c ~ _ ~ s ~ _ => While(c, s)

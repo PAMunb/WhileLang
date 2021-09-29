@@ -28,7 +28,7 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
   }
 
   test("Test for the sequence parser") {
-    p.parse(p.sequence, "(x := x + 1; x := y)") match {
+    p.parse(p.sequenceStatement, "x := x + 1; x := y") match {
       case p.Success(c, _) => assert(c == Sequence(
         Assignment("x", Add(Variable("x"), Const(1)), 1),
         Assignment("x", Variable("y"), 2)))
@@ -104,8 +104,20 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
     }
   }
 
-  test("Test for the factorial module") {
+  test("Test for the fibonacci module") {
     val content = ResourceHandle.getContent("Fibonacci.wp")
+
+    assert(content != null)
+
+    p.parse(p.whileProgram, content) match {
+      case p.Success(program, _) => succeed
+      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail
+    }
+  }
+
+  test("Test for the factorial module") {
+    val content = ResourceHandle.getContent("Factorial.wp")
 
     assert(content != null)
 

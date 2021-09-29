@@ -3,7 +3,7 @@ begin
   procedure fib(val z, val u, res v) is
     if(z < 3)
       then v := u + 1
-      else (fib(z-1, u, v); fib(z-2, v, v))
+      else fib(z-1, u, v); fib(z-2, v, v)
     endif
   end;
 

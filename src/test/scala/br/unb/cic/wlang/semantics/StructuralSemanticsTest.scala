@@ -76,6 +76,4 @@ class StructuralSemanticsTest extends AnyFunSuite {
     }
 
   }
-
-
-  }
+}
