@@ -1,0 +1,9 @@
+begin
+
+  x := 20;
+  y := 10;
+  tmp := x;
+  x := y;
+  y := tmp
+
+end

@@ -127,4 +127,16 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
       case p.Error(msg,_) => println(s"ERROR: $msg"); fail
     }
   }
+
+  test("Test for the swapvars module") {
+    val content = ResourceHandle.getContent("Swapvars.wp")
+
+    assert(content != null)
+
+    p.parse(p.whileProgram, content) match {
+      case p.Success(program, _) => succeed
+      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail
+    }
+  }
 }
