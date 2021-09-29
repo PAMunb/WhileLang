@@ -127,4 +127,53 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
       case p.Error(msg,_) => println(s"ERROR: $msg"); fail
     }
   }
+
+  test("Test for the cube module") {
+    val content = ResourceHandle.getContent("Cube.wp")
+
+    assert(content != null)
+
+    p.parse(p.whileProgram, content) match {
+      case p.Success(program, _) => succeed
+      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail
+    }
+  }
+
+  test("Test for the swapvars module") {
+    val content = ResourceHandle.getContent("Swapvars.wp")
+
+    assert(content != null)
+
+    p.parse(p.whileProgram, content) match {
+      case p.Success(program, _) => succeed
+      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail
+    }
+  }
+
+  test("Test for the square module") {
+    val content = ResourceHandle.getContent("Square.wp")
+
+    assert(content != null)
+
+    p.parse(p.whileProgram, content) match {
+      case p.Success(program, _) => succeed
+      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail
+    }
+  }
+
+  test("Test for the check positive, negative or zero module") {
+    val content = ResourceHandle.getContent("CheckPosNegZero.wp")
+
+    assert(content != null)
+
+    p.parse(p.whileProgram, content) match {
+      case p.Success(program, _) => succeed
+      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
+      case p.Error(msg,_) => println(s"ERROR: $msg"); fail
+    }
+  }
+
 }
