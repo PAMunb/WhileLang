@@ -1,9 +1,9 @@
 begin
 
-  procedure square(val a, res b) is
+  procedure cube(val a, res b) is
     b := a * (a * a)
   end;
 
-  sum(3, z)
+  cube(3, z)
 
 end
