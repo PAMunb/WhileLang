@@ -169,9 +169,9 @@ class WhileProgramParserTest extends  AnyFunSuite with BeforeAndAfter {
 
     assert(content != null)
 
-    p.parse(p.whileProgram, content) match {
+    p.parse(p.whileProgram, content) match {    //se utilizar p.parseAll tem o mesmo efeito, qual a diferença?
       case p.Success(program, _) => succeed
-      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
+      case p.Failure(msg, next) => println(s"FAILURE: $msg"); fail    // verificar se é possível obter offset/posição do erro 
       case p.Error(msg,_) => println(s"ERROR: $msg"); fail
     }
   }

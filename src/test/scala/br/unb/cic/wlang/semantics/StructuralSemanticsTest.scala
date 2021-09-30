@@ -76,7 +76,7 @@ class StructuralSemanticsTest extends AnyFunSuite {
     val res = interpreter.run(wp)
 
     res match {
-      case TC(e, s) => println(res); assert(s(e("z")) == 27)
+      case TC(e, s) => println(s"Cube print: $res"); assert(s(e("z")) == 27)
       case _ => fail()
     }
   }
@@ -98,10 +98,8 @@ class StructuralSemanticsTest extends AnyFunSuite {
 
     val interpreter = new StructuralSemantics()
 
-    val res = interpreter.run(wp)
-
-    res match {
-      case TC(e, s) => println(res); assert(s(e("z")) == 9)
+    interpreter.run(wp) match {
+      case TC(e, s) => assert(s(e("z")) == 9)
       case _ => fail()
     }
   }

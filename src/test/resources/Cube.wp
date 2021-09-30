@@ -1,7 +1,7 @@
 begin
 
   procedure square(val a, res b) is
-    b := a * a; (b := b * a);
+    b := a * (a * a)
   end;
 
   sum(3, z)
