@@ -1,0 +1,9 @@
+begin
+
+  procedure cube(val a, res b) is
+    b := a * (a * a)
+  end;
+
+  cube(3, z)
+
+end
