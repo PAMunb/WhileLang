@@ -14,15 +14,16 @@ case object ForwardAnalysis extends AnalysisDirection
 case object BackwardAnalysis extends AnalysisDirection
 
 abstract class MFP[Abstraction](wp: WhileProgram) {
-  def execute(wp: WhileProgram): (Abstraction, Abstraction) = ???
 
-  def execute(): (mutable.Map[Label, Set[Abstraction]], mutable.Map[Label, Set[Abstraction]]) = {
+  type MFPResult = mutable.Map[Label, Set[Abstraction]]
+
+  def execute(): (MFPResult, MFPResult) = {
     // Step1: Initialization (of w and analysis)
     val f = buildControlFlowGraph()
     val extremeLabels = findExtremeLabels()
 
     var w : List[(Label, Label)] = List()
-    val analysis : HashMap[Label, Set[Abstraction]] = new mutable.HashMap()
+    val analysis : MFPResult = new mutable.HashMap()
 
     for((l1, l2) <- f) {
       w = (l1, l2) :: w      // "cons" in Scala is '::'
@@ -41,17 +42,19 @@ abstract class MFP[Abstraction](wp: WhileProgram) {
       w = w.tail
       if(! lattice().orderOperator(transferFunction(analysis(l1), l1), analysis(l2))) {
         analysis(l2) = lattice().meetOperator(analysis(l2), transferFunction(analysis(l1), l1))
-        for( (a, b) <- f.filter( {case (a, _) => a == l2 })) {
+        for( (a, b) <- f.filter( { case (a, _) => a == l2 }) ) {
           w = (a, b) :: w
         }
       }
     }
-    val mfp1: mutable.Map[Label, Set[Abstraction]] = analysis
-    val mfp2: mutable.Map[Label, Set[Abstraction]] = new mutable.HashMap()
+
+    val mfp1: MFPResult = analysis
+    val mfp2: MFPResult = new mutable.HashMap()
 
     for(l <- allLabels) {
       mfp2(l) = transferFunction(analysis(l), l)
     }
+
     (mfp1, mfp2)
   }
 
@@ -68,11 +71,11 @@ abstract class MFP[Abstraction](wp: WhileProgram) {
     case BackwardAnalysis => finalLabels(wp)
   }
 
+  /* these abstract definitions correspond to the 'hot spots' of our framework */
   def kill(label: Label): Set[Abstraction]
   def gen(label: Label): Set[Abstraction]
 
   def lattice(): Lattice[Abstraction]
   def direction(): AnalysisDirection
-  def extremeValues(): Set[Abstraction] // TODO: perhaps we should review this definition after implementing
-                                   //  an instance
+  def extremeValues(): Set[Abstraction]
 }

@@ -16,4 +16,5 @@ case class Lattice[Abstraction](meet: MeetOperator, bottom: Set[Abstraction]) {
     case Union => s1 subsetOf s2
     case Intersection => s2 subsetOf s1
   }
+
 }
