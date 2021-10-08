@@ -1,6 +1,7 @@
 package br.unb.cic.wlang.df
 
 import br.unb.cic.wlang.df.ReachingDefinition.undef
+import br.unb.cic.wlang.df.framework.{ ReachingDefinition => MFPRD }
 import br.unb.cic.wlang._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -35,6 +36,34 @@ class ReachingDefinitionTest extends  AnyFunSuite {
 
     assert(in(6) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
     assert(out(6) == Set(("x", undef), ("y", 6), ("z", 2), ("z", 4)))
+  }
+
+  test("Test case for the MFP implementation of Reaching Definition") {
+    val mfp = new MFPRD(p)
+
+    val (mfp1, mfp2) = mfp.execute()
+
+    assert(mfp1 != null)
+    assert(mfp2 != null)
+
+    assert(mfp1(1) == Set(("x", undef), ("y", undef), ("z", undef)))
+    assert(mfp2(1) == Set(("x", undef), ("y", 1), ("z", undef)))
+
+    assert(mfp1(2) == Set(("x", undef), ("y", 1), ("z", undef)))
+    assert(mfp2(2) == Set(("x", undef), ("y", 1), ("z", 2)))
+
+    assert(mfp1(3) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+    assert(mfp2(3) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+
+    assert(mfp1(4) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+    assert(mfp2(4) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
+
+    assert(mfp1(5) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
+    assert(mfp2(5) == Set(("x", undef), ("y", 5), ("z", 4)))
+
+    assert(mfp1(6) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+    assert(mfp2(6) == Set(("x", undef), ("y", 6), ("z", 2), ("z", 4)))
+
   }
 
 }

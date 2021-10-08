@@ -26,6 +26,7 @@ object AvailableExpression {
     val entry: mutable.HashMap[Int, Abstraction] = mutable.HashMap()
     val exit: mutable.HashMap[Int, Abstraction] = mutable.HashMap()
     val nonTrivialExpressionSet: Set[Exp] = nonTrivialExpression(program)
+
     val bottom = nonTrivialExpressionSet
 
     // we need to initialize exit..., since we have
