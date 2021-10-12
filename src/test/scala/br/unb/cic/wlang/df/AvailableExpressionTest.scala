@@ -52,8 +52,6 @@ class AvailableExpressionTest extends AnyFunSuite {
     assert(mfp1 != null)
     assert(mfp2 != null)
 
-    print(mfp2)
-
     assert(mfp1(1) == Set.empty)
     assert(mfp2(1) == Set(Add(Variable("a"), Variable("b"))))
 
