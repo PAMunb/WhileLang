@@ -1,5 +1,6 @@
 package br.unb.cic.wlang.df
 
+import br.unb.cic.wlang.df.framework.{ VeryBusyExpression => MFPVBE }
 import br.unb.cic.wlang._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -38,6 +39,31 @@ class VeryBusyExpressionTest extends AnyFunSuite {
     assert(in(5) == Set(Sub(Variable("a"), Variable("b"))))
     assert(out(5) == Set.empty)
 
+  }
+
+  test("Test case for the MFP implementation of Very Busy Expressions") {
+
+    val mfp = new MFPVBE(p)
+
+    val (mfp1, mfp2) = mfp.execute()
+
+    assert(mfp1 != null)
+    assert(mfp2 != null)
+
+    assert(mfp2(1) == Set(Sub(Variable("a"), Variable("b")), Sub(Variable("b"), Variable("a"))))
+    assert(mfp1(1) == Set(Sub(Variable("a"), Variable("b")), Sub(Variable("b"), Variable("a"))))
+
+    assert(mfp2(2) == Set(Sub(Variable("a"), Variable("b")), Sub(Variable("b"), Variable("a"))))
+    assert(mfp1(2) == Set(Sub(Variable("a"), Variable("b"))))
+
+    assert(mfp2(3) == Set(Sub(Variable("a"), Variable("b"))))
+    assert(mfp1(3) == Set.empty)
+
+    assert(mfp2(4) == Set(Sub(Variable("a"), Variable("b")), Sub(Variable("b"), Variable("a"))))
+    assert(mfp1(4) == Set(Sub(Variable("a"), Variable("b"))))
+
+    assert(mfp2(5) == Set(Sub(Variable("a"), Variable("b"))))
+    assert(mfp1(5) == Set.empty)
   }
 
 }
