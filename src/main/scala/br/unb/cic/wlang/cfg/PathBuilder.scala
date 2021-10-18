@@ -7,8 +7,9 @@ object PathBuilder {
 
   type Path = List[Label]
 
-  def paths(l: Label, extremeLabels: Set[Label], f: CFG): Set[Path] = ???
-
+  def paths(target: Label, extremeLabels: Set[Label], flow: CFG): Set[Path] =
+    extremeLabels.flatMap(from => path(from, target, flow))
+  
   def path(from: Label, target: Label, flow: CFG): Set[Path] = path(from, target, flow, List(), List())
 
   def path(from: Label, target: Label, flow: CFG, visiting: List[Label], finished: List[Label]): Set[Path] =
