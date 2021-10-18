@@ -1,9 +1,12 @@
 package br.unb.cic.wlang.cfg
 
 import br.unb.cic.wlang._
+import br.unb.cic.wlang.parser.{ResourceHandle, WhileProgramParser}
 import org.scalatest.funsuite.AnyFunSuite
 
-class CFGBuilderBuilderTest extends AnyFunSuite {
+import CFGToDot._
+
+class CFGBuilderTest extends AnyFunSuite {
 
   test("Test simple CFG") {
     val stmt = Assignment("x", Const(4), 1)
@@ -58,6 +61,22 @@ class CFGBuilderBuilderTest extends AnyFunSuite {
     )
 
     assert(g == expected)
+  }
+
+  test("Test for CFG of Sum2") {
+    val p = WhileProgram(
+      List(
+        Procedure("sum",List(FormalArgument("a",ByValue), FormalArgument("b",ByValue), FormalArgument("c",ByResult)),1,
+        Assignment("c",Add(Variable("a"),Variable("b")),2), 3)
+      ),
+      Sequence(
+        Call("sum",List(Const(3), Const(2), Variable("x")),4,5),
+        Call("sum",List(Const(10), Const(10), Variable("y")),6,7)
+      )
+    )
+
+    val g = CFGBuilder.flow(p)
+    println(exportDot(g))
   }
 
 }

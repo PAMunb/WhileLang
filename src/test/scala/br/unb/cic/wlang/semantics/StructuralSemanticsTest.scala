@@ -196,6 +196,28 @@ class StructuralSemanticsTest extends AnyFunSuite {
       case TC(e, s) => assert(s(e("y")) == 34)
       case _ => fail()
     }
+  }
 
+  test("Test for the sum2 program") {
+    val content = ResourceHandle.getContent("Sum2.wp")
+
+    assert(content != null)
+
+    val p: WhileProgramParser = new WhileProgramParser()
+
+    val wp: WhileProgram = p.parse(p.whileProgram, content) match {
+      case p.Success(program: WhileProgram, _) => program
+      case p.Failure(msg, _) => println(s"FAILURE: $msg"); fail
+      case p.Error(msg, _) => println(s"ERROR: $msg"); fail
+    }
+
+    assert(wp != null)
+
+    val interpreter = new StructuralSemantics()
+
+    interpreter.run(wp) match {
+      case TC(e, s) => assert(s(e("y")) == 20)
+      case _ => fail()
+    }
   }
 }

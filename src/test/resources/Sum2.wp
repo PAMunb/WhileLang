@@ -1,0 +1,10 @@
+begin
+
+  procedure sum(val a, val b, res c) is
+    c := a + b
+  end;
+
+  sum(3, 2, x);
+  sum(10, 10, y)
+
+end
