@@ -87,13 +87,13 @@ class ReachingDefinitionTest extends  AnyFunSuite {
       assert(mop2(3) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
 //
 //    assert(mfp1(4) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
-//    assert(mfp2(4) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
+      assert(mop2(4) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
 //
 //    assert(mfp1(5) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
-//    assert(mfp2(5) == Set(("x", undef), ("y", 5), ("z", 4)))
+      assert(mop2(5) == Set(("x", undef), ("y", 5), ("z", 4)))
 //
 //    assert(mfp1(6) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
-//    assert(mfp2(6) == Set(("x", undef), ("y", 6), ("z", 2), ("z", 4)))
+      assert(mop2(6) == Set(("x", undef), ("y", 6), ("z", 2), ("z", 4)))
 
   }
 

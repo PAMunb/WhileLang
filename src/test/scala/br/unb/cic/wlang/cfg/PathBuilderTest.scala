@@ -16,11 +16,11 @@ class PathBuilderTest extends AnyFunSuite {
 
   test("Test for path 1 2 flow1") {
     val expected : Set[Path] = Set(List(1,2))
-    assert(expected == path(1, 2, flow1))
+    assert(path(1, 2, flow1) == expected)
   }
 
   test("Test for path 1 3 flow1") {
-    val expected : Set[Path] = Set(List(1,2,3))
+    val expected : Set[Path] = Set(List(1,2,3), List(1,2,3,4,5,3))
     assert(expected == path(1, 3, flow1))
   }
 
@@ -30,12 +30,12 @@ class PathBuilderTest extends AnyFunSuite {
   }
 
   test("Test for path 1 4 flow1") {
-    val expected : Set[Path] = Set(List(1,2,3,4))
+    val expected : Set[Path] = Set(List(1,2,3,4), List(1,2,3,4,5,3,4))
     assert(expected == path(1, 4, flow1))
   }
 
   test("Test for path 1 5 flow1") {
-    val expected : Set[Path] = Set(List(1,2,3,4,5))
+    val expected : Set[Path] = Set(List(1,2,3,4,5), List(1,2,3,4,5,3,4,5))
     assert(expected == path(1, 5, flow1))
   }
 
