@@ -1,29 +1,19 @@
 package br.unb.cic.wlang.df.framework
 
 import br.unb.cic.wlang.WhileProgram
-import br.unb.cic.wlang.WhileProgram.{Label, finalLabels, initLabel}
-import br.unb.cic.wlang.cfg.CFGBuilder
-import br.unb.cic.wlang.cfg.CFGBuilder.CFG
+import br.unb.cic.wlang.WhileProgram.{Label}
 
 import scala.collection.mutable
-import scala.collection.mutable.HashMap
 
-trait AnalysisDirection
+abstract class MFP[Abstraction](wp: WhileProgram) extends GenericFramework[Abstraction](wp) {
 
-case object ForwardAnalysis extends AnalysisDirection
-case object BackwardAnalysis extends AnalysisDirection
-
-abstract class MFP[Abstraction](wp: WhileProgram) {
-
-  type MFPResult = mutable.Map[Label, Set[Abstraction]]
-
-  def execute(): (MFPResult, MFPResult) = {
+  override def execute(): (Result, Result) = {
     // Step1: Initialization (of w and analysis)
     val f = buildControlFlowGraph()
     val extremeLabels = findExtremeLabels()
 
     var w : List[(Label, Label)] = List()
-    val analysis : MFPResult = new mutable.HashMap()
+    val analysis : Result = new mutable.HashMap()
 
     for((l1, l2) <- f) {
       w = (l1, l2) :: w      // "cons" in Scala is '::'
@@ -48,8 +38,8 @@ abstract class MFP[Abstraction](wp: WhileProgram) {
       }
     }
 
-    val mfp1: MFPResult = analysis
-    val mfp2: MFPResult = new mutable.HashMap()
+    val mfp1: Result = analysis
+    val mfp2: Result = new mutable.HashMap()
 
     for(l <- allLabels) {
       mfp2(l) = transferFunction(analysis(l), l)
@@ -57,25 +47,4 @@ abstract class MFP[Abstraction](wp: WhileProgram) {
 
     (mfp1, mfp2)
   }
-
-  def transferFunction(analysis: Set[Abstraction], label: Label): Set[Abstraction] =
-    (analysis diff kill(label)) union gen(label)
-
-  def buildControlFlowGraph(): CFG = direction() match {
-    case ForwardAnalysis => CFGBuilder.flow(wp)
-    case BackwardAnalysis => CFGBuilder.flowR(wp)
-  }
-
-  def findExtremeLabels() : Set[Label] = direction() match {
-    case ForwardAnalysis => Set(initLabel(wp))
-    case BackwardAnalysis => finalLabels(wp)
-  }
-
-  /* these abstract definitions correspond to the 'hot spots' of our framework */
-  def kill(label: Label): Set[Abstraction]
-  def gen(label: Label): Set[Abstraction]
-
-  def lattice(): Lattice[Abstraction]
-  def direction(): AnalysisDirection
-  def extremeValues(): Set[Abstraction]
 }

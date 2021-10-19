@@ -1,7 +1,7 @@
 package br.unb.cic.wlang.df
 
 import br.unb.cic.wlang.df.ReachingDefinition.undef
-import br.unb.cic.wlang.df.framework.{ ReachingDefinition => MFPRD }
+import br.unb.cic.wlang.df.framework.{ ReachingDefinition => MFPRD, ReachingDefinitionMOP => MOPRD }
 import br.unb.cic.wlang._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -63,6 +63,37 @@ class ReachingDefinitionTest extends  AnyFunSuite {
 
     assert(mfp1(6) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
     assert(mfp2(6) == Set(("x", undef), ("y", 6), ("z", 2), ("z", 4)))
+
+  }
+
+
+  test("Test case for the MOP implementation of Reaching Definition") {
+    val mop = new MOPRD(p)
+
+    val (mop1, mop2) = mop.execute()
+
+    assert(mop1 != null)
+    assert(mop2 != null)
+
+    assert(mop1 == mop2)
+
+//    assert(mfp1(1) == Set(("x", undef), ("y", undef), ("z", undef)))
+      assert(mop2(1) == Set(("x", undef), ("y", 1), ("z", undef)))
+//
+//    assert(mfp1(2) == Set(("x", undef), ("y", 1), ("z", undef)))
+      assert(mop2(2) == Set(("x", undef), ("y", 1), ("z", 2)))
+//
+//    assert(mfp1(3) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+      assert(mop2(3) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+//
+//    assert(mfp1(4) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+//    assert(mfp2(4) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
+//
+//    assert(mfp1(5) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
+//    assert(mfp2(5) == Set(("x", undef), ("y", 5), ("z", 4)))
+//
+//    assert(mfp1(6) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+//    assert(mfp2(6) == Set(("x", undef), ("y", 6), ("z", 2), ("z", 4)))
 
   }
 
