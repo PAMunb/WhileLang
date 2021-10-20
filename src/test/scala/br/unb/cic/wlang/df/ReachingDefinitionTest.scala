@@ -75,26 +75,26 @@ class ReachingDefinitionTest extends  AnyFunSuite {
     assert(mop1 != null)
     assert(mop2 != null)
 
-    assert(mop1 == mop2)
+//     assert(mop1 == mop2)
 
-//    assert(mfp1(1) == Set(("x", undef), ("y", undef), ("z", undef)))
-      assert(mop2(1) == Set(("x", undef), ("y", 1), ("z", undef)))
-//
-//    assert(mfp1(2) == Set(("x", undef), ("y", 1), ("z", undef)))
-      assert(mop2(2) == Set(("x", undef), ("y", 1), ("z", 2)))
-//
-//    assert(mfp1(3) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
-      assert(mop2(3) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
-//
-//    assert(mfp1(4) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
-      assert(mop2(4) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
-//
-//    assert(mfp1(5) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
-      assert(mop2(5) == Set(("x", undef), ("y", 5), ("z", 4)))
-//
-//    assert(mfp1(6) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
-      assert(mop2(6) == Set(("x", undef), ("y", 6), ("z", 2), ("z", 4)))
+    assert(mop1(1) == Set(("x", undef), ("y", undef), ("z", undef)))
+    assert(mop2(1) == Set(("x", undef), ("y", 1), ("z", undef)))
 
-  }
+    assert(mop1(2) == Set(("x", undef), ("y", 1), ("z", undef)))
+    assert(mop2(2) == Set(("x", undef), ("y", 1), ("z", 2)))
+
+    assert(mop1(3) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+    assert(mop2(3) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+
+    assert(mop1(4) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+    assert(mop2(4) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
+
+    assert(mop1(5) == Set(("x", undef), ("y", 1), ("y", 5), ("z", 4)))
+    assert(mop2(5) == Set(("x", undef), ("y", 5), ("z", 4)))
+
+    assert(mop1(6) == Set(("x", undef), ("y", 1), ("z", 2), ("y", 5), ("z", 4)))
+    assert(mop2(6) == Set(("x", undef), ("y", 6), ("z", 2), ("z", 4)))
+
+}
 
 }

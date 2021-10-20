@@ -1,5 +1,6 @@
 package br.unb.cic.wlang.df
 
+import br.unb.cic.wlang.df.framework.{ LiveVariable => MFPLV }
 import br.unb.cic.wlang._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -51,5 +52,39 @@ class LiveVariableTest extends  AnyFunSuite {
     assert(out(7) == Set.empty)
 
   }
+
+   test("Test case for the MFP implementation of Live Variables") {
+
+    val mfp = new MFPLV(p)
+
+    val (mfp1, mfp2) = mfp.execute()
+
+    assert(mfp1 != null)
+    assert(mfp2 != null)
+
+    assert(mfp2(1) == Set.empty)
+    assert(mfp1(1) == Set.empty)
+
+    assert(mfp2(2) == Set.empty)
+    assert(mfp1(2) == Set("y"))
+
+    assert(mfp2(3) == Set("y"))
+    assert(mfp1(3) == Set("x", "y")) //== Set("x") union Set("y")) 
+
+    assert(mfp2(4) == Set("x", "y")) //== Set("x") union Set("y")) 
+    assert(mfp1(4) == Set("y"))
+
+    assert(mfp2(5) == Set("y"))
+    assert(mfp1(5) == Set("z"))
+
+    assert(mfp2(6) == Set("y"))
+    assert(mfp1(6) == Set("z"))
+
+    assert(mfp2(7) == Set("z"))
+    assert(mfp1(7) == Set.empty)
+
+ }
+
+
 
 }
