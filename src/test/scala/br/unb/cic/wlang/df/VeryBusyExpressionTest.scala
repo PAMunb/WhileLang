@@ -1,6 +1,6 @@
 package br.unb.cic.wlang.df
 
-import br.unb.cic.wlang.df.framework.{ VeryBusyExpression => MFPVBE }
+import br.unb.cic.wlang.df.framework.{ VeryBusyExpression => MFPVBE, VeryBusyExpressionMOP => MOPVBE}
 import br.unb.cic.wlang._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -66,4 +66,28 @@ class VeryBusyExpressionTest extends AnyFunSuite {
     assert(mfp1(5) == Set.empty)
   }
 
+    test("Test case for the MOP implementation of Very Busy Expressions") {
+
+    val mop = new MOPVBE(p)
+
+    val (mop1, mop2) = mop.execute()
+
+    assert(mop1 != null)
+    assert(mop2 != null)
+
+    assert(mop2(1) == Set(Sub(Variable("a"), Variable("b")), Sub(Variable("b"), Variable("a"))))
+    assert(mop1(1) == Set(Sub(Variable("a"), Variable("b")), Sub(Variable("b"), Variable("a"))))
+
+    assert(mop2(2) == Set(Sub(Variable("a"), Variable("b")), Sub(Variable("b"), Variable("a"))))
+    assert(mop1(2) == Set(Sub(Variable("a"), Variable("b"))))
+
+    assert(mop2(3) == Set(Sub(Variable("a"), Variable("b"))))
+    assert(mop1(3) == Set.empty)
+
+    assert(mop2(4) == Set(Sub(Variable("a"), Variable("b")), Sub(Variable("b"), Variable("a"))))
+    assert(mop1(4) == Set(Sub(Variable("a"), Variable("b"))))
+
+    assert(mop2(5) == Set(Sub(Variable("a"), Variable("b"))))
+    assert(mop1(5) == Set.empty)
+  }
 }
