@@ -25,7 +25,7 @@ class PathBuilderTest extends AnyFunSuite {
   }
 
   test("Test for path 2 3 flow1") {
-    val expected : Set[Path] = Set(List(2,3))
+    val expected : Set[Path] = Set(List(2,3),  List(2, 3, 4, 5, 3))
     assert(expected == path(2, 3, flow1))
   }
 
