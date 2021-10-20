@@ -25,9 +25,13 @@ Springer Publishing Company, Incorporated.
 
    * [x] abstract syntax of the While language (Chap. I)
    * [x] control-flow graph (Chapter II)
-   * [ ] intraprocedural data-flow analysis (Chapter II)
+   * [x] intraprocedural data-flow analysis (Chapter II)
+     * [x] MFP (Maximum Fixed Point framework)
+     * [x] MOP (Meet Over all Paths framework)
    * [ ] interprocedural data-flow analysis (Chapter II)
-
+   * [x] parser for the extended While language (including procedures and procedure calls)
+   * [x] structural semantics
+   
 At this moment the four basic data flow analysis were implemented:
    * Available Expressions Analysis
    * Reaching Definitions Analysis
