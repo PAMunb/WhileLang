@@ -14,17 +14,20 @@ abstract class MOP[Abstraction](wp: WhileProgram) extends GenericFramework[Abstr
     val nodes: Set[Label] = flow.flatMap({ case (a,b) => List(a, b) } )
     val allPaths: Map[Label, Set[Path]] = nodes.map(label => (label, paths(label, findExtremeLabels(), flow))).toMap
 
+    var mop1 : Result = new mutable.HashMap()
     var mop2 : Result = new mutable.HashMap()
 
     for((label, paths) <- allPaths) {
-      var res : Set[Abstraction] = lattice().bottom
+      var res1 : Set[Abstraction] = lattice().bottom
+      var res2 : Set[Abstraction] = lattice().bottom
       for(p <- paths) {
-        res = lattice().meetOperator(res, transferFunctionOverPath(extremeValues(), p))
+        res1 = lattice().meetOperator(res1, transferFunctionOverPath(extremeValues(), p.reverse.tail.reverse))
+        res2 = lattice().meetOperator(res2, transferFunctionOverPath(extremeValues(), p))
       }
-      mop2 += label -> res
+      mop1 += label -> res1
+      mop2 += label -> res2
     }
-
-    (mop2, mop2)
+    (mop1, mop2)
   }
 
   def transferFunctionOverPath(analysis: Set[Abstraction], path: List[Label]): Set[Abstraction] = {
