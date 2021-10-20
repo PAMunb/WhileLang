@@ -1,6 +1,6 @@
 package br.unb.cic.wlang.df
 
-import br.unb.cic.wlang.df.framework.{ AvailableExpression => MFPAE }
+import br.unb.cic.wlang.df.framework.{GenericFramework, MFP, AvailableExpression => FPAE}
 import br.unb.cic.wlang._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -45,7 +45,7 @@ class AvailableExpressionTest extends AnyFunSuite {
 
   test("Test case for the MFP implementation of Available Expressions") {
 
-    val mfp = new MFPAE(p)
+    val mfp = new FPAE(p) with MFP[Exp]
 
     val (mfp1, mfp2) = mfp.execute()
 

@@ -4,7 +4,7 @@ import br.unb.cic.wlang.{Assignment, Condition, Skip, WhileProgram}
 import br.unb.cic.wlang.WhileProgram.{Label, assignments, block, fv}
 import br.unb.cic.wlang.df.ReachingDefinition.undef
 
-class ReachingDefinition(wp: WhileProgram) extends MFP[(String, Label)](wp) {
+abstract class ReachingDefinition(wp: WhileProgram) extends GenericFramework[(String, Label)](wp) {
 
   override def lattice(): Lattice[(String, Label)] = Lattice(Union, Set[(String, Label)]())
   override def direction(): AnalysisDirection = ForwardAnalysis

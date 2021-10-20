@@ -1,6 +1,6 @@
 package br.unb.cic.wlang.df
 
-import br.unb.cic.wlang.df.framework.{ LiveVariable => MFPLV }
+import br.unb.cic.wlang.df.framework.{MFP, LiveVariable => FPLV}
 import br.unb.cic.wlang._
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -55,7 +55,7 @@ class LiveVariableTest extends  AnyFunSuite {
 
    test("Test case for the MFP implementation of Live Variables") {
 
-    val mfp = new MFPLV(p)
+    val mfp = new FPLV(p) with MFP[String]
 
     val (mfp1, mfp2) = mfp.execute()
 

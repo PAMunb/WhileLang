@@ -12,7 +12,7 @@ trait AnalysisDirection
 case object ForwardAnalysis extends AnalysisDirection
 case object BackwardAnalysis extends AnalysisDirection
 
-abstract class GenericFramework[Abstraction](wp: WhileProgram) {
+abstract class GenericFramework[Abstraction](wp: WhileProgram)  {
 
   type Result = mutable.Map[Label, Set[Abstraction]]
 
@@ -31,12 +31,10 @@ abstract class GenericFramework[Abstraction](wp: WhileProgram) {
     case BackwardAnalysis => finalLabels(wp)
   }
 
-  /* these abstract definitions correspond to the 'hot spots' of our framework */
   def kill(label: Label): Set[Abstraction]
   def gen(label: Label): Set[Abstraction]
 
   def lattice(): Lattice[Abstraction]
   def direction(): AnalysisDirection
   def extremeValues(): Set[Abstraction]
-
 }

@@ -1,11 +1,10 @@
 package br.unb.cic.wlang.df.framework
 
-import br.unb.cic.wlang.WhileProgram
 import br.unb.cic.wlang.WhileProgram.{Label}
 
 import scala.collection.mutable
 
-abstract class MFP[Abstraction](wp: WhileProgram) extends GenericFramework[Abstraction](wp) {
+trait MFP[Abstraction] extends GenericFramework[Abstraction] {
 
   override def execute(): (Result, Result) = {
     // Step1: Initialization (of w and analysis)

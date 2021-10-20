@@ -1,14 +1,12 @@
 package br.unb.cic.wlang.df.framework
 
-import br.unb.cic.wlang.WhileProgram
 import br.unb.cic.wlang.WhileProgram.Label
 import br.unb.cic.wlang.cfg.PathBuilder.Path
 import br.unb.cic.wlang.cfg.PathBuilder.paths
 
 import scala.collection.mutable
 
-abstract class MOP[Abstraction](wp: WhileProgram) extends GenericFramework[Abstraction](wp) {
-
+trait MOP[Abstraction] extends GenericFramework[Abstraction] {
   override def execute(): (Result, Result) = {
     val flow  = buildControlFlowGraph()
     val nodes: Set[Label] = flow.flatMap({ case (a,b) => List(a, b) } )
