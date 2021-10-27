@@ -1,7 +1,8 @@
-package br.unb.cic.wlang.df.framework
+package br.unb.cic.wlang.df.instances
 
-import br.unb.cic.wlang.{Assignment, Condition, Skip, WhileProgram}
 import br.unb.cic.wlang.WhileProgram.{Label, block, fv}
+import br.unb.cic.wlang.df.framework._
+import br.unb.cic.wlang.{Assignment, Condition, Skip, WhileProgram}
 
 
 abstract class LiveVariable(wp: WhileProgram) extends GenericFramework[String](wp) {

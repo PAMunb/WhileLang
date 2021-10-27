@@ -2,8 +2,9 @@ package br.unb.cic.wlang.df
 
 import br.unb.cic.wlang.WhileProgram.Label
 import br.unb.cic.wlang.df.ReachingDefinition.undef
-import br.unb.cic.wlang.df.framework.{MFP, MOP, ReachingDefinition => FRD}
+import br.unb.cic.wlang.df.framework.{MFP, MOP}
 import br.unb.cic.wlang._
+import br.unb.cic.wlang.df.instances.ReachingDefinition
 import org.scalatest.funsuite.AnyFunSuite
 
 class ReachingDefinitionTest extends  AnyFunSuite {
@@ -40,7 +41,7 @@ class ReachingDefinitionTest extends  AnyFunSuite {
   }
 
   test("Test case for the MFP implementation of Reaching Definition") {
-    val mfp = new FRD(p) with MFP[(String, Label)]
+    val mfp = new ReachingDefinition(p) with MFP[(String, Label)]
 
     val (mfp1, mfp2) = mfp.execute()
 
@@ -69,14 +70,12 @@ class ReachingDefinitionTest extends  AnyFunSuite {
 
 
   test("Test case for the MOP implementation of Reaching Definition") {
-    val mop = new FRD(p) with MOP[(String, Label)]
+    val mop = new ReachingDefinition(p) with MOP[(String, Label)]
 
     val (mop1, mop2) = mop.execute()
 
     assert(mop1 != null)
     assert(mop2 != null)
-
-//     assert(mop1 == mop2)
 
     assert(mop1(1) == Set(("x", undef), ("y", undef), ("z", undef)))
     assert(mop2(1) == Set(("x", undef), ("y", 1), ("z", undef)))

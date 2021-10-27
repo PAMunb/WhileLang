@@ -1,8 +1,9 @@
 package br.unb.cic.wlang.df
 
 import br.unb.cic.wlang.WhileProgram.Label
-import br.unb.cic.wlang.df.framework.{MFP, MOP, VeryBusyExpression => FVBE}
+import br.unb.cic.wlang.df.framework.{MFP, MOP}
 import br.unb.cic.wlang._
+import br.unb.cic.wlang.df.instances.VeryBusyExpression
 import org.scalatest.funsuite.AnyFunSuite
 
 class VeryBusyExpressionTest extends AnyFunSuite {
@@ -44,7 +45,7 @@ class VeryBusyExpressionTest extends AnyFunSuite {
 
   test("Test case for the MFP implementation of Very Busy Expressions") {
 
-    val mfp = new FVBE(p) with MFP[Exp]
+    val mfp = new VeryBusyExpression(p) with MFP[Exp]
 
     val (mfp1, mfp2) = mfp.execute()
 
@@ -69,7 +70,7 @@ class VeryBusyExpressionTest extends AnyFunSuite {
 
     test("Test case for the MOP implementation of Very Busy Expressions") {
 
-    val mop = new FVBE(p) with MOP[Exp]
+    val mop = new VeryBusyExpression(p) with MOP[Exp]
 
     val (mop1, mop2) = mop.execute()
 

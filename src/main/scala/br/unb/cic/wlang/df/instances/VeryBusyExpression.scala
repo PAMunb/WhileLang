@@ -1,7 +1,8 @@
-package br.unb.cic.wlang.df.framework
+package br.unb.cic.wlang.df.instances
 
-import br.unb.cic.wlang.{Assignment, Condition, Skip, WhileProgram, Exp}
-import br.unb.cic.wlang.WhileProgram.{Label, block, nonTrivialExpression, expHasVariable}
+import br.unb.cic.wlang.WhileProgram.{Label, block, expHasVariable, nonTrivialExpression}
+import br.unb.cic.wlang.df.framework._
+import br.unb.cic.wlang._
 
 
 abstract class VeryBusyExpression(wp: WhileProgram) extends GenericFramework[Exp](wp) {
