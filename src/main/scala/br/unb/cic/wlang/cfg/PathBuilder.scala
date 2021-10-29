@@ -11,12 +11,12 @@ object PathBuilder {
 
   def path(from: Label, target: Label, flow: CFG): Set[Path] = path(from, target, flow, List())
 
-  def path(from: Label, target: Label, flow: CFG, visited: List[Label]): Set[Path] = {
+  def path(from: Label, target: Label, flow: CFG, visited: List[Label], limit: Int = 3): Set[Path] = {
     var res: Set[Path] = if(from == target) Set(List(from)) else Set()
 
     val newVisited = from :: visited
 
-    for((n, t) <- flow if (n == from) && (newVisited.filter(p => p == t).size < 3)) {
+    for((n, t) <- flow if (n == from) && (newVisited.filter(p => p == t).size < limit)) {
       res = res ++ path(t, target, flow, newVisited).map(path => from :: path)
     }
     res
