@@ -8,6 +8,8 @@ import br.unb.cic.wlang._
  * flow graphs from a While program.
  */
 object CFGBuilder {
+
+  type InterCFG = Set[(Int, Int, Int, Int)]
   type CFG = Set[(Int, Int)]
 
   /**
