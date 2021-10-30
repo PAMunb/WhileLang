@@ -14,6 +14,7 @@ class PathBuilderTest extends AnyFunSuite {
     (2,4), (4,1), (8,5), (5,6), (6,1), (8,7), (7,8),
     (9, 1), (8,10)
   )
+  val interFlow: InterCFG = Set((9, 1, 8, 10), (4, 1, 8, 5), (6, 1, 8, 7))
 
   test("Test for path 1 flow1") {
     val expected = List(1)
@@ -76,6 +77,15 @@ class PathBuilderTest extends AnyFunSuite {
     val expected2 = List(9, 1, 2, 4, 1, 2, 3, 8, 10)
     assert(path(9, 10, flow3).contains(expected1))
     assert(path(9, 10, flow3).contains(expected2))
+    assert(completePath(expected1,flow3, interFlow))
+    assert(!completePath(expected2,flow3, interFlow))
+  }
+
+  test("Test for complete path") {
+    val expected1 = List(9, 1, 2, 4, 1, 2, 3, 8, 5, 6, 1, 2, 3, 8, 7, 8, 10)
+    val expected2 = List(9, 1, 2, 4, 1, 2, 3, 8, 10)
+    assert(completePath(expected1,flow3, interFlow))
+    assert(!completePath(expected2,flow3, interFlow))
   }
 
 }

@@ -55,4 +55,24 @@ object CFGBuilder {
     }
   }
 
+  def interFlow(wp: WhileProgram): InterCFG =
+    wp.declarations.map(p => interFlow(wp.declarations, p)).foldLeft(Set[(Int, Int, Int, Int)]())(_ union _) union interFlow(wp.declarations, wp.stmt)
+
+  def interFlow(ds: List[Procedure], p: Procedure): InterCFG = interFlow(ds, p.stmt)
+
+  private def interFlow(ds: List[Procedure], stmt: Stmt): InterCFG = {
+    stmt match {
+      case Assignment(_, _, _) => Set.empty
+      case Skip(_) => Set.empty
+      case Sequence(s1, s2) => interFlow(ds, s1) union interFlow(ds, s2)
+      case IfThenElse(Condition(_, _), s1, s2) =>
+        interFlow(ds, s1) union interFlow(ds, s2)
+      case While(Condition(_, _), s) => interFlow(ds, s)
+      case Call(name, _, lc, lr) =>
+        findProcedure(name, ds) match {
+          case Procedure(_, _, ln, _, lx) => Set((lc, ln, lx, lr))
+        }
+    }
+  }
+
 }
