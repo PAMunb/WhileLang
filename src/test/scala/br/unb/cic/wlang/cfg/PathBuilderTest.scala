@@ -81,11 +81,18 @@ class PathBuilderTest extends AnyFunSuite {
     assert(!completePath(expected2,flow3, interFlow))
   }
 
-  test("Test for complete path") {
+  test("Test for complete paths") {
     val expected1 = List(9, 1, 2, 4, 1, 2, 3, 8, 5, 6, 1, 2, 3, 8, 7, 8, 10)
     val expected2 = List(9, 1, 2, 4, 1, 2, 3, 8, 10)
     assert(completePath(expected1,flow3, interFlow))
     assert(!completePath(expected2,flow3, interFlow))
+  }
+
+  test("Test for an invalid path (it does not make sense to call CP on it)") {
+    intercept[java.lang.AssertionError] {
+      val expected1 = List(9, 1, 2, 3, 10)
+      completePath(expected1,flow3, interFlow)
+    }
   }
 
 }
